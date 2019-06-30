@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import db from '../DB/config';
 
+import auth from '../Middleware/auth';
+
 export default class UserController {
 /* Adds a new user */
   static async addUser(req, res) {
@@ -14,9 +16,12 @@ export default class UserController {
       const result = await db.query(query);
 
       const createdUser = result.rows[0];
+
+      const userToken = auth.generateToken(createdUser);
       return res.status(201).send({
         success: 'success',
         user: createdUser,
+        token: userToken,
       });
     } catch (error) {
       return res.status(500)
