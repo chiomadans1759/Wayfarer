@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node bin/dev",
+    "test": "mocha",
     "build": "mkdir dist && babel src -s -d dist",
     "dev": "nodemon  --exec babel-node server/app.js",
     "lint": "eslint"
@@ -26,6 +27,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
+    "mocha": "^6.1.4",
     "nodemon": "^1.19.1"
   }
 }
