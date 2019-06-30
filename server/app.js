@@ -19,11 +19,12 @@ app.get('/', (req, res) => {
   res.json({ Message: 'Welcome! This is the Wayfarer trip app' });
 });
 
+
 // get the port from the process env
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`server up ${PORT}`);
+  console.log(`server is listening for requests at port ${PORT}`);
 });
 
 export default app; // for testing
