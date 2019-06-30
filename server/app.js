@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
+import Route from './Routes/routes';
 
 dotenv.config();
 const app = express();
@@ -14,7 +15,9 @@ app.use((req, res, next) => {
 
 // use the body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
+
+Route(app);
 
 // define routes
 app.get('/', (req, res) => {
@@ -28,4 +31,4 @@ app.listen(PORT, () => {
   console.log(`server is listening for requests at port ${PORT}`);
 });
 
-export default app; // for testing
+export default app;
