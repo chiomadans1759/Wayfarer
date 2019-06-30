@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
 
+dotenv.config();
 const app = express();
 
 // to avoid cors issue
@@ -12,13 +14,12 @@ app.use((req, res, next) => {
 
 // use the body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json()); 
 
 // define routes
 app.get('/', (req, res) => {
   res.json({ Message: 'Welcome! This is the Wayfarer trip app' });
 });
-
 
 // get the port from the process env
 const PORT = process.env.PORT || 8000;
