@@ -30,9 +30,15 @@ const auth = {
     }
     const decoded = auth.verifyToken(token);
     if (decoded.error) {
-      return res.status(500).json({
+      return res.status(401).json({
         status: 'error',
         error: 'Failed to authenticate token.',
+      });
+    }
+    if (decoded.is_admin !== 'true') {
+      return res.status(401).json({
+        status: 'error',
+        error: 'Hi! This resource can only be accessed by an admin',
       });
     }
     try {

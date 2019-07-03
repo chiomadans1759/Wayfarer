@@ -9,7 +9,7 @@ export default class UserController {
       const hash = bcrypt.hashSync(req.body.password, 10);
       const query = {
         text:
-          'insert into users (email, firstname, lastname, password, is_admin) values ($1, $2, $3, $4, $5) returning id, email, firstname, lastname, password, is_admin',
+          'insert into users (email, firstname, lastname, password, is_admin) values ($1, $2, $3, $4, $5) returning *',
         values: [req.body.email, req.body.firstname, req.body.lastname, hash, false],
       };
       const result = await db.query(query);
@@ -25,8 +25,8 @@ export default class UserController {
           email: createdUser.email,
           firstname: createdUser.firstname,
           lastname: createdUser.lastname,
+          token: userToken,
         },
-        token: userToken,
       });
     } catch (error) {
       return res.status(500)
@@ -54,8 +54,8 @@ export default class UserController {
             mail: user.email,
             firstname: user.firstname,
             lastname: user.lastname,
+            token,
           },
-          token,
         });
       }
       return res.status(401).json({
