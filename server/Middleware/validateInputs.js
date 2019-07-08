@@ -144,14 +144,13 @@ const validateInputs = {
       values: [req.body.trip_id, req.body.seat_number],
     };
     const checkCapacity = {
-      text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trips.bus_id = $1',
+      text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trips.trip_id = $1',
       values: [req.body.trip_id],
     };
     const result = await db.query(query);
-    const booking = result.rows;
+    const booking = result.rows[0];
     const busCapacity = await db.query(checkCapacity);
     const capacity = busCapacity.rows[0];
-    console.log(capacity.capacity);
 
     // const busCapacity = capacity.
 
@@ -164,10 +163,10 @@ const validateInputs = {
       }
     }
 
-    if (!booking.trip_id) {
+    if (!capacity) {
       return res.status(400).json({
         status: 'error',
-        error: 'There are no available trips at this point',
+        error: 'This trip does not exist or has not been created yet',
       });
     }
 
@@ -178,12 +177,12 @@ const validateInputs = {
       });
     }
 
-    // if (req.body.seat_number > capacity.capacity) {
-    //   return res.status(400).json({
-    //     status: 'error',
-    //     error: `Please choose a seat number between 1 and ${capacity}`,
-    //   });
-    // }
+    if (req.body.seat_number > capacity.capacity) {
+      return res.status(400).json({
+        status: 'error',
+        error: `Please choose a seat number between 1 and ${capacity.capacity}`,
+      });
+    }
 
     return next();
   },
