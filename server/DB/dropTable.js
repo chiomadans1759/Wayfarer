@@ -25,6 +25,18 @@ const dropTables = () => {
       db.end();
     });
 
+  const dropUsers = 'DROP TABLE IF EXISTS users';
+  db.query(dropUsers)
+    .then((res) => {
+      console.log(res);
+      console.log('Table dropped successfully');
+      db.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      db.end();
+    });
+
   const dropBookings = 'DROP TABLE IF EXISTS bookings';
   db.query(dropBookings)
     .then((res) => {
