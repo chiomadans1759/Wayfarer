@@ -66,4 +66,22 @@ export default class TripsController {
       });
     }
   }
+
+  // Get all available trips
+  static async getTrips(req, res) {
+    try {
+      const query = { text: 'select * from trips' };
+      const result = await db.query(query);
+      const trips = result.rows;
+      return res.status(201).json({
+        status: 'success',
+        data: trips,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching trips',
+      });
+    }
+  }
 }
