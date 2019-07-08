@@ -92,6 +92,49 @@ const validateInputs = {
     }
     return next();
   },
+
+  async trips(req, res, next) {
+    const required = ['bus_id', 'origin', 'destination', 'trip_date', 'fare'];
+    const query = {
+      text: 'select * from trips where (bus_id, trip_date) = ($1, $2)',
+      // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE (trips.bus_id, trips.trip_date) = ($1, $2)',
+      // text: 'select * from trips, buses where (trips.bus_id, trips.trip_date) = ($1, $2) AND trips.bus_id = buses.bus_id',
+      values: [req.body.bus_id, req.body.trip_date],
+    };
+    const findBus = {
+      text: 'select * from buses where bus_id = $1 LIMIT 1',
+      values: [req.body.bus_id],
+    };
+    const result = await db.query(query);
+    const trip = result.rows;
+    const output = await db.query(findBus);
+    const bus = output.rows[0];
+
+    for (let i = 0; i < required.length; i += 1) {
+      if (!req.body[required[i]]) {
+        return res.status(400).json({
+          status: 'error',
+          error: `${required[i]} is required`,
+        });
+      }
+    }
+
+    if (trip.length > 0) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This bus has already been assign for a trip on this date',
+      });
+    }
+
+    if (!bus) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This bus does not exist or has not yet been registered',
+      });
+    }
+
+    return next();
+  },
 };
 
 export default validateInputs;
