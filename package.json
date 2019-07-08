@@ -4,7 +4,7 @@
   "description": "A bus trip booking app",
   "main": "app.js",
   "scripts": {
-    "start": "node bin/dev",
+    "start": "node server/bin/prod",
     "test": "mocha",
     "build": "mkdir dist && babel src -s -d dist",
     "dev": "nodemon  --exec babel-node server/app.js",
