@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node server/bin/prod",
     "test": "mocha",
-    "build": "mkdir dist && babel src -s -d dist",
     "dev": "nodemon  --exec babel-node server/app.js",
     "lint": "eslint",
     "seedAdmin": "node --require babel-register server/DB/seedAdmin",
