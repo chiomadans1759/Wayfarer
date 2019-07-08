@@ -50,6 +50,48 @@ const validateInputs = {
     }
     return next();
   },
+
+  async buses(req, res, next) {
+    const required = ['number_plate', 'manufacturer', 'model', 'year', 'capacity'];
+    const query = {
+      text: 'select * from buses where number_plate = $1',
+      values: [req.body.number_plate],
+    };
+    // use number plate because a bus can only be registered once but used as many times as possible
+    const result = await db.query(query);
+    const bus = result.rows;
+
+    if (req.body.length < 1) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'The request body must not be empty',
+      });
+    }
+
+    for (let i = 0; i < required.length; i += 1) {
+      if (!req.body[required[i]]) {
+        return res.status(400).json({
+          status: 'error',
+          error: `${required[i]} is required`,
+        });
+      }
+    }
+
+    if (!Number(req.body.capacity)) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'The capacity of the bus has to be a number',
+      });
+    }
+
+    if (bus.length > 0) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'The bus with this plate number already exists',
+      });
+    }
+    return next();
+  },
 };
 
 export default validateInputs;
