@@ -135,6 +135,58 @@ const validateInputs = {
 
     return next();
   },
+
+  async bookings(req, res, next) {
+    const required = ['trip_id', 'seat_number'];
+    const query = {
+      text: 'select * from bookings where (trip_id, seat_number) = ($1, $2)',
+      // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE (trips.bus_id, trips.trip_date) = ($1, $2)',
+      values: [req.body.trip_id, req.body.seat_number],
+    };
+    const checkCapacity = {
+      text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trips.bus_id = $1',
+      values: [req.body.trip_id],
+    };
+    const result = await db.query(query);
+    const booking = result.rows;
+    const busCapacity = await db.query(checkCapacity);
+    const capacity = busCapacity.rows[0];
+    console.log(capacity.capacity);
+
+    // const busCapacity = capacity.
+
+    for (let i = 0; i < required.length; i += 1) {
+      if (!req.body[required[i]]) {
+        return res.status(400).json({
+          status: 'error',
+          error: `${required[i]} is required`,
+        });
+      }
+    }
+
+    if (!booking.trip_id) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'There are no available trips at this point',
+      });
+    }
+
+    if (booking) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This seat has already been booked',
+      });
+    }
+
+    // if (req.body.seat_number > capacity.capacity) {
+    //   return res.status(400).json({
+    //     status: 'error',
+    //     error: `Please choose a seat number between 1 and ${capacity}`,
+    //   });
+    // }
+
+    return next();
+  },
 };
 
 export default validateInputs;

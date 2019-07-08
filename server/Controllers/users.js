@@ -9,22 +9,22 @@ export default class UserController {
       const hash = bcrypt.hashSync(req.body.password, 10);
       const query = {
         text:
-          'insert into users (email, firstname, lastname, password, is_admin) values ($1, $2, $3, $4, $5) returning *',
-        values: [req.body.email, req.body.firstname, req.body.lastname, hash, false],
+          'insert into users (email, first_name, last_name, password, is_admin) values ($1, $2, $3, $4, $5) returning *',
+        values: [req.body.email, req.body.first_name, req.body.last_name, hash, false],
       };
+
       const result = await db.query(query);
-
       const createdUser = result.rows[0];
-
       const userToken = auth.generateToken(createdUser);
+      // console.log(createdUser);
       return res.status(201).json({
         status: 'success',
         data: {
-          id: createdUser.id,
+          user_id: createdUser.id,
           is_admin: createdUser.is_admin,
           email: createdUser.email,
-          firstname: createdUser.firstname,
-          lastname: createdUser.lastname,
+          first_name: createdUser.first_name,
+          last_name: createdUser.last_name,
           token: userToken,
         },
       });
@@ -49,11 +49,11 @@ export default class UserController {
         return res.status(200).json({
           status: 'success',
           data: {
-            id: user.id,
+            user_id: user.id,
             is_admin: user.is_admin,
-            mail: user.email,
-            firstname: user.firstname,
-            lastname: user.lastname,
+            email: user.email,
+            first_name: user.first_name,
+            lastn_ame: user.last_name,
             token,
           },
         });
