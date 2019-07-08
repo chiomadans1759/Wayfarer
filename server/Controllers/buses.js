@@ -5,7 +5,7 @@ export default class BusesController {
   static async addBus(req, res) {
     try {
       const query = {
-        text: 'insert into buses (number_plate, manufacturer, model, year, capacity) values ($1, $2, $3, $4, $5) returning id, number_plate, manufacturer, model, year, capacity',
+        text: 'insert into buses (number_plate, manufacturer, model, year, capacity) values ($1, $2, $3, $4, $5) returning bus_id, number_plate, manufacturer, model, year, capacity',
         values: [
           req.body.number_plate,
           req.body.manufacturer,
@@ -21,7 +21,7 @@ export default class BusesController {
       return res.status(201).json({
         status: 'success',
         data: {
-          id: bus.id,
+          bus_id: bus.bus_id,
           number_plate: bus.number_plate,
           manufacturer: bus.manufacturer,
           model: bus.model,
@@ -30,6 +30,7 @@ export default class BusesController {
         },
       });
     } catch (error) {
+      console.log(error);
       return res.status(500)
         .json({
           status: 'error',
