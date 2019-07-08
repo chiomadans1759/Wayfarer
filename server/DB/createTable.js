@@ -3,10 +3,10 @@ import db from './config';
 // Create a table on the database for users
 db.query(
   `CREATE TABLE IF NOT EXISTS users (
-    id serial PRIMARY KEY,
+    user_id serial PRIMARY KEY,
     is_admin boolean NOT NULL,
-    lastname varchar NOT NULL,
-    firstname varchar NOT NULL,
+    last_name varchar NOT NULL,
+    first_name varchar NOT NULL,
     email text NOT NULL, 
     password varchar NOT NULL
 )`,
@@ -20,7 +20,7 @@ db.query(
 // Create a table for buses
 db.query(
   `CREATE TABLE IF NOT EXISTS buses (
-    id serial PRIMARY KEY,
+    bus_id serial PRIMARY KEY,
     number_plate varchar NOT NULL,
     manufacturer varchar NOT NULL,
     model varchar NOT NULL,
@@ -37,13 +37,13 @@ db.query(
 // Create a table for trips
 db.query(
   `CREATE TABLE IF NOT EXISTS trips (
-    id serial PRIMARY KEY,
+    trip_id serial PRIMARY KEY,
     bus_id integer NOT NULL,
     origin varchar NOT NULL,
     destination varchar NOT NULL,
-    trip_date timestamp NOT NULL,
+    trip_date date NOT NULL,
     fare varchar NOT NULL,
-    status integer DEFAULT 1
+    status varchar NOT NULL
 )`,
   (err) => {
     if (err) {
@@ -54,7 +54,8 @@ db.query(
 
 db.query(
   `CREATE TABLE IF NOT EXISTS bookings (
-    id serial PRIMARY KEY,
+    booking_id serial PRIMARY KEY,
+    seat_number integer NOT NULL,
     trip_id integer NOT NULL,
     user_id integer NOT NULL,
     created_on date NOT NULL
@@ -65,3 +66,4 @@ db.query(
     }
   },
 );
+// new Date();
