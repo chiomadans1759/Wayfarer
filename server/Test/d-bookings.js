@@ -174,7 +174,7 @@ describe('Bookings', () => {
 
   // Test for Fetching existing bookings
   describe('/Get Bookings', () => {
-    it('it should Login, check token, and GET all registered bookings', (done) => {
+    it('it should Login an admin and GET all registered bookings', (done) => {
       chai.request(app)
         .post('/api/v1/login')
         .send(admin)
@@ -199,7 +199,32 @@ describe('Bookings', () => {
         });
     });
 
-    it('it should Login, check token, and GET a specific booking by id', (done) => {
+    it('it should Login a GET all registered bookings by this user', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should Login and GET any booking by ID if user is admin', (done) => {
       chai.request(app)
         .post('/api/v1/login')
         .send(admin)
@@ -219,6 +244,81 @@ describe('Bookings', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should Login and GET a specific booking by a user using ID', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings/1')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should return error if booking doesn\'t exist', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings/5')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(404);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('Booking with this ID doesn\'t exist');
+              done();
+            });
+        });
+    });
+
+    it('it should return error if booking by this user doesn\'t exist', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings/5')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(404);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('This booking by this user does not exist');
               done();
             });
         });
