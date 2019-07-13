@@ -170,4 +170,119 @@ describe('Users', () => {
         });
     });
   });
+
+  // Test for Fetching existing users
+  describe('/Get Users', () => {
+    it('it should return unauthorized if user is not logged in', (done) => {
+      chai.request(app)
+        .get('/api/v1/users')
+        .end((error, res) => {
+          res.should.have.status(401);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('No token provided.');
+          done();
+        });
+    });
+
+    it('it should return unauthorized user if user is not an admin', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/users')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(401);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('Hi! This resource can only be accessed by an admin');
+              done();
+            });
+        });
+    });
+
+    it('it should Login, check token, and GET all users', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/users')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should Login, check token, and GET a specific user by id', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/users/1')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should return invalid id if id is not valid', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/users/p')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('This id is invalid. ID must be a number!');
+              done();
+            });
+        });
+    });
+  });
 });
