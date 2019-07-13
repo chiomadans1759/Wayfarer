@@ -66,4 +66,81 @@ export default class BookingsController {
       });
     }
   }
+
+  // Admin can get a single booking and a user can get one of his/bookings by ID
+  static async getABooking(req, res) {
+    try {
+      const query = {
+        text: 'select * from bookings where booking_id = $1 LIMIT 1',
+        values: [req.params.id],
+      };
+      const result = await db.query(query);
+      const userBookings = result.rows;
+
+      if (userBookings.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: 'This trip does not exist',
+        });
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: userBookings,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this booking',
+      });
+    }
+  }
+
+  // User can get all his/her bookings
+  static async getUserBookings(req, res) {
+    try {
+      const query = {
+        text: 'select * from bookings where user_id = $1',
+        values: [req.user.user_id],
+      };
+      const result = await db.query(query);
+      const userBookings = result.rows;
+      return res.status(200).json({
+        status: 'success',
+        data: userBookings,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this user\'s bookings',
+      });
+    }
+  }
+
+  // User can get all his/her bookings
+  static async getAUserBooking(req, res) {
+    try {
+      const query = {
+        text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
+        values: [req.user.user_id, req.body.booking_id],
+      };
+      const result = await db.query(query);
+      const userBooking = result.rows;
+
+      if (userBooking.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: 'This trip by this user does not exist',
+        });
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: userBooking,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this user\'s bookings',
+      });
+    }
+  }
 }
