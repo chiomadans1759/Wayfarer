@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import db from '../DB/config';
 
 const validateInputs = {
@@ -45,7 +46,67 @@ const validateInputs = {
     if (user.length > 0) {
       return res.status(400).json({
         status: 'error',
-        error: 'User with this login details already exists',
+        error: 'User with this email has already been registered',
+      });
+    }
+    return next();
+  },
+
+  async userLogin(req, res, next) {
+    const emailFilter = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const required = ['email', 'password'];
+    const email = emailFilter.test(String(req.body.email).toLowerCase());
+
+    if (req.body.email && !email) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This email is not correct!',
+      });
+    }
+
+    const query = { text: 'select * from users where email = $1 LIMIT 1', values: [req.body.email] };
+    const result = await db.query(query);
+    const user = result.rows[0];
+
+    if (req.body.length < 1) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'The request body must not be empty',
+      });
+    }
+
+    for (let i = 0; i < required.length; i += 1) {
+      if (!req.body[required[i]]) {
+        return res.status(400).json({
+          status: 'error',
+          error: `${required[i]} is required`,
+        });
+      }
+    }
+
+    if (!user) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This email is not registered on our database',
+      });
+    }
+
+    const check = bcrypt.compareSync(req.body.password, user.password);
+    if (!check) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This password doesn\'t match our record',
+      });
+    }
+
+    return next();
+  },
+
+  async validateId(req, res, next) {
+    if (!Number(req.params.id)) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'This id is invalid. ID must be a number!',
       });
     }
     return next();
@@ -57,7 +118,6 @@ const validateInputs = {
       text: 'select * from buses where number_plate = $1',
       values: [req.body.number_plate],
     };
-    // use number plate because a bus can only be registered once but used as many times as possible
     const result = await db.query(query);
     const bus = result.rows;
 
@@ -80,7 +140,7 @@ const validateInputs = {
     if (!Number(req.body.capacity)) {
       return res.status(400).json({
         status: 'error',
-        error: 'The capacity of the bus has to be a number',
+        error: 'The capacity of the bus must be a number',
       });
     }
 
@@ -97,8 +157,6 @@ const validateInputs = {
     const required = ['bus_id', 'origin', 'destination', 'trip_date', 'fare'];
     const query = {
       text: 'select * from trips where (bus_id, trip_date) = ($1, $2)',
-      // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE (trips.bus_id, trips.trip_date) = ($1, $2)',
-      // text: 'select * from trips, buses where (trips.bus_id, trips.trip_date) = ($1, $2) AND trips.bus_id = buses.bus_id',
       values: [req.body.bus_id, req.body.trip_date],
     };
     const findBus = {
@@ -109,6 +167,13 @@ const validateInputs = {
     const trip = result.rows;
     const output = await db.query(findBus);
     const bus = output.rows[0];
+
+    if (req.body.length < 1) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'The request body must not be empty',
+      });
+    }
 
     for (let i = 0; i < required.length; i += 1) {
       if (!req.body[required[i]]) {
@@ -140,7 +205,6 @@ const validateInputs = {
     const required = ['trip_id', 'seat_number'];
     const query = {
       text: 'select * from bookings where (trip_id, seat_number) = ($1, $2)',
-      // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE (trips.bus_id, trips.trip_date) = ($1, $2)',
       values: [req.body.trip_id, req.body.seat_number],
     };
     const checkCapacity = {
@@ -152,7 +216,12 @@ const validateInputs = {
     const busCapacity = await db.query(checkCapacity);
     const capacity = busCapacity.rows[0];
 
-    // const busCapacity = capacity.
+    if (req.body.length < 1) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'The request body must not be empty',
+      });
+    }
 
     for (let i = 0; i < required.length; i += 1) {
       if (!req.body[required[i]]) {

@@ -24,6 +24,7 @@ export default class TripsController {
       const trip = result.rows[0];
       const output = await db.query(findBus);
       const bus = output.rows[0];
+
       return res.status(201).json({
         status: 'success',
         data: {
@@ -33,15 +34,37 @@ export default class TripsController {
           destination: trip.destination,
           trip_date: Date(trip.trip_date),
           fare: trip.fare,
-          status: 'status',
+          status: 'active',
+          number_plate: bus.number_plate,
+          manufacturer: bus.manufacturer,
+          model: bus.model,
           capacity: bus.capacity,
+          year: bus.year,
         },
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: 'error',
         error: 'Problem creating trips',
+      });
+    }
+  }
+
+  // Get all available trips
+  static async getTrips(req, res) {
+    try {
+      // const query = { text: 'SELECT * FROM trips' };
+      const query = { text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id' };
+      const result = await db.query(query);
+      const trips = result.rows;
+      return res.status(200).json({
+        status: 'success',
+        data: trips,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching trips',
       });
     }
   }
@@ -50,37 +73,27 @@ export default class TripsController {
   static async getATrip(req, res) {
     try {
       const query = {
-        text: 'select * from trips where id = $1 LIMIT 1',
+        // text: 'SELECT * FROM trips where trip_id = $1 LIMIT 1',
+        text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id where trip_id = $1 LIMIT 1',
         values: [req.params.id],
       };
       const result = await db.query(query);
       const trip = result.rows;
-      return res.status(201).json({
+
+      if (trip.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: 'This trip does not exist',
+        });
+      }
+      return res.status(200).json({
         status: 'success',
         data: trip,
       });
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching this user',
-      });
-    }
-  }
-
-  // Get all available trips
-  static async getTrips(req, res) {
-    try {
-      const query = { text: 'select * from trips' };
-      const result = await db.query(query);
-      const trips = result.rows;
-      return res.status(201).json({
-        status: 'success',
-        data: trips,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching trips',
+        error: 'Problem fetching this trip',
       });
     }
   }

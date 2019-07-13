@@ -21,6 +21,7 @@ db.query(
 db.query(
   `CREATE TABLE IF NOT EXISTS buses (
     bus_id serial PRIMARY KEY,
+    user_id integer NOT NULL,
     number_plate varchar NOT NULL,
     manufacturer varchar NOT NULL,
     model varchar NOT NULL,
@@ -66,4 +67,3 @@ db.query(
     }
   },
 );
-// new Date();

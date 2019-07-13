@@ -20,14 +20,9 @@ const auth = {
   },
 
   async verifyUserToken(req, res, next) {
-    // if (decoded.is_admin !== 'true') {
-    //   return res.status(401).json({
-    //     status: 'error',
-    //     error: 'Hi! This resource can only be accessed by an admin',
-    //   });
-    // }
     try {
       const token = req.headers['x-access-token'];
+      const decoded = auth.verifyToken(token);
 
       if (!token) {
         return res.status(401).json({
@@ -36,7 +31,6 @@ const auth = {
         });
       }
 
-      const decoded = auth.verifyToken(token);
       if (decoded.error) {
         return res.status(401).json({
           status: 'error',
@@ -48,17 +42,38 @@ const auth = {
         text: 'select * from users where user_id = $1 LIMIT 1', values: [decoded.payload.user_id],
       };
       const result = await db.query(query);
+
       if (result.rows < 1) {
         return res.status(401).json({
           status: 'error',
-          error: 'User does not exist.',
+          error: 'This user does not exist.',
         });
       }
+
       const user = result.rows[0];
       req.user = user;
       return next();
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({
+        status: 'error',
+        error: 'Server  error',
+      });
+    }
+  },
+
+  async verifyAdmin(req, res, next) {
+    try {
+      const token = req.headers['x-access-token'];
+      const decoded = auth.verifyToken(token);
+
+      if (decoded.payload.is_admin !== true) {
+        return res.status(401).json({
+          status: 'error',
+          error: 'Hi! This resource can only be accessed by an admin',
+        });
+      }
+      return next();
+    } catch (error) {
       return res.status(500).json({
         status: 'error',
         error: 'Server  error',
