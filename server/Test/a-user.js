@@ -21,7 +21,7 @@ const admin = {
 };
 
 describe('Users', () => {
-  // Test User Signup
+  // Test for creating new user
   describe('/POST register users', () => {
     it('it should throw an error if the request body is empty', (done) => {
       chai.request(app)
@@ -98,6 +98,74 @@ describe('Users', () => {
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('User with this email has already been registered');
+          done();
+        });
+    });
+  });
+
+  // Test for loggin in an existing user
+  describe('/POST login users', () => {
+    it('it should not login a user without email and password fields', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send({
+          email: 'victorAdeoye@gmail.com',
+        })
+        .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('password is required');
+          done();
+        });
+    });
+
+    it('it should return error if user is not registered', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send({
+          email: 'tosin@gmail.com',
+          password: 'tosinf419',
+        })
+        .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('This email is not registered on our database');
+          done();
+        });
+    });
+
+    it('it should login a registered user and generate an access token', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((error, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('is_admin');
+          res.body.data.should.have.property('first_name');
+          res.body.data.should.have.property('last_name');
+          res.body.data.should.have.property('email');
+          res.body.data.should.have.property('token');
+          done();
+        });
+    });
+
+    it('it should return error if user\'s password is not correct', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send({
+          email: 'victor@gmail.com',
+          password: 'victor',
+        })
+        .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('This password doesn\'t match our record');
           done();
         });
     });
