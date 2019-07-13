@@ -48,4 +48,22 @@ export default class BookingsController {
         });
     }
   }
+
+  // Admin Gets all bookings
+  static async getAllBookings(req, res) {
+    try {
+      const query = { text: 'SELECT * FROM bookings Inner JOIN users ON bookings.user_id = users.user_id' };
+      const result = await db.query(query);
+      const bookings = result.rows;
+      return res.status(200).json({
+        status: 'success',
+        data: bookings,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching bookings',
+      });
+    }
+  }
 }
