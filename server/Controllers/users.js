@@ -16,7 +16,6 @@ export default class UserController {
       const result = await db.query(query);
       const createdUser = result.rows[0];
       const userToken = auth.generateToken(createdUser);
-      // console.log(createdUser);
       return res.status(201).json({
         status: 'success',
         data: {
@@ -37,30 +36,70 @@ export default class UserController {
     }
   }
 
+  // Get all registered users
+  static async getAllUsers(req, res) {
+    try {
+      const query = { text: 'select * from users' };
+      const result = await db.query(query);
+      const users = result.rows;
+      return res.status(200).json({
+        status: 'success',
+        data: users,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching all users',
+      });
+    }
+  }
+
+  // Get a single user
+  static async getAUser(req, res) {
+    try {
+      const query = {
+        text: 'select * from users where user_id = $1 LIMIT 1',
+        values: [req.params.id],
+      };
+      const result = await db.query(query);
+      const user = result.rows;
+
+      if (user.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: 'This user does not exist',
+        });
+      }
+
+      return res.status(200).json({
+        status: 'success',
+        data: user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this user',
+      });
+    }
+  }
+
   // Login a registered user
   static async loginUser(req, res) {
     try {
       const query = { text: 'select * from users where email = $1 LIMIT 1', values: [req.body.email] };
       const result = await db.query(query);
       const user = result.rows[0];
-      const check = bcrypt.compareSync(req.body.password, user.password);
-      if (check) {
-        const token = auth.generateToken(user);
-        return res.status(200).json({
-          status: 'success',
-          data: {
-            user_id: user.id,
-            is_admin: user.is_admin,
-            email: user.email,
-            first_name: user.first_name,
-            lastn_ame: user.last_name,
-            token,
-          },
-        });
-      }
-      return res.status(401).json({
-        status: 'error',
-        error: 'User with this login details doesn\'t exist',
+      const token = auth.generateToken(user);
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          user_id: user.id,
+          is_admin: user.is_admin,
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          token,
+        },
       });
     } catch (error) {
       return res.status(500)
