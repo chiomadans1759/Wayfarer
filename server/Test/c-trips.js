@@ -217,7 +217,7 @@ describe('Trips', () => {
         });
     });
 
-    it('it should filter trips by origin', (done) => {
+    it('it should filter trips by Origin', (done) => {
       chai.request(app)
         .post('/api/v1/login')
         .send(login)
@@ -242,7 +242,7 @@ describe('Trips', () => {
         });
     });
 
-    it('it should return an error if search doesn\'t match any origin', (done) => {
+    it('it should return an error if search doesn\'t match any Origin', (done) => {
       chai.request(app)
         .post('/api/v1/login')
         .send(login)
@@ -262,6 +262,56 @@ describe('Trips', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('There is no trip going from Awka at this time');
+              done();
+            });
+        });
+    });
+
+    it('it should filter trips by Destination', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/trips/destination/Benin')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should return an error if search doesn\'t match any origin', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/trips/destination/Awka')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('There is no trip going to Awka at this time');
               done();
             });
         });
