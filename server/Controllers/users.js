@@ -54,35 +54,6 @@ export default class UserController {
     }
   }
 
-  // Get a single user
-  static async getAUser(req, res) {
-    try {
-      const query = {
-        text: 'select * from users where user_id = $1 LIMIT 1',
-        values: [req.params.id],
-      };
-      const result = await db.query(query);
-      const user = result.rows;
-
-      if (user.length < 1) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'This user does not exist',
-        });
-      }
-
-      return res.status(200).json({
-        status: 'success',
-        data: user,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this user',
-      });
-    }
-  }
-
   // Login a registered user
   static async loginUser(req, res) {
     try {
