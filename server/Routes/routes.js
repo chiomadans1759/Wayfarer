@@ -23,7 +23,8 @@ export default (server) => {
   server.get('/api/v1/trips/:id', auth.verifyUserToken, validateInputs.validateId, TripsController.getATrip);
 
   /* Bookings Routes Here */
-  server.post('/api/v1/bookings', auth.verifyUserToken, validateInputs.bookings, BookingsController.bookTrip);
+  server.post('/api/v1/bookings', auth.verifyUserToken, validateInputs.addBookings, BookingsController.bookTrip);
   server.get('/api/v1/bookings', auth.verifyUserToken, BookingsController.getAllBookings);
-  server.get('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, BookingsController.getABooking);
+  server.get('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.getABooking);
+  server.delete('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.deleteABooking);
 };
