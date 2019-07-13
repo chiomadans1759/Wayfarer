@@ -69,6 +69,34 @@ export default class TripsController {
     }
   }
 
+  // Filter Trips by Origin
+  static async filterTripsByOrigin(req, res) {
+    try {
+      const query = {
+        text: 'select * from trips where LOWER(origin) = $1',
+        values: [req.params.origin],
+      };
+      const result = await db.query(query);
+      const trips = result.rows;
+
+      if (trips.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: `There is no trip going to ${req.params.origin} at this time`,
+        });
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: trips,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching trips',
+      });
+    }
+  }
+
   // Get a single trip
   static async getATrip(req, res) {
     try {

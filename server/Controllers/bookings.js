@@ -40,7 +40,6 @@ export default class BookingsController {
         },
       });
     } catch (error) {
-      console.log(error);
       return res.status(500)
         .json({
           status: 'error',
@@ -111,7 +110,6 @@ export default class BookingsController {
         },
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: 'error',
         error: 'Problem fetching this booking',
@@ -138,7 +136,6 @@ export default class BookingsController {
         },
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: 'error',
         error: 'Problem fetching this booking',
