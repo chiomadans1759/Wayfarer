@@ -58,4 +58,32 @@ export default class BusesController {
       });
     }
   }
+
+  // Admin Gets a single bus
+  static async getABus(req, res) {
+    try {
+      const query = {
+        text: 'select * from buses where bus_id = $1 LIMIT 1',
+        values: [req.params.id],
+      };
+      const result = await db.query(query);
+      const bus = result.rows;
+
+      if (bus.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: 'This bus does not exist',
+        });
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: bus,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this bus',
+      });
+    }
+  }
 }
