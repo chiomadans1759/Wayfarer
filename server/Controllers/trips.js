@@ -53,8 +53,8 @@ export default class TripsController {
   // Get all available trips
   static async getTrips(req, res) {
     try {
-      // const query = { text: 'SELECT * FROM trips' };
-      const query = { text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id' };
+      const query = { text: 'SELECT * FROM trips' };
+      // const query = { text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id' };
       const result = await db.query(query);
       const trips = result.rows;
       return res.status(200).json({
@@ -72,28 +72,43 @@ export default class TripsController {
   // Get a single trip
   static async getATrip(req, res) {
     try {
-      const query = {
-        // text: 'SELECT * FROM trips where trip_id = $1 LIMIT 1',
-        text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id where trip_id = $1 LIMIT 1',
-        values: [req.params.id],
-      };
-      const result = await db.query(query);
-      const trip = result.rows;
-
-      if (trip.length < 1) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'This trip does not exist',
-        });
-      }
       return res.status(200).json({
         status: 'success',
-        data: trip,
+        data: req.trip,
       });
     } catch (error) {
       return res.status(500).json({
         status: 'error',
         error: 'Problem fetching this trip',
+      });
+    }
+  }
+
+  // Admin can cancel trip
+  static async cancelATrip(req, res) {
+    try {
+      const query = {
+        text: 'UPDATE trips SET status=$1 WHERE trip_id=$2 returning *',
+        values: [
+          'cancelled',
+          req.trip.trip_id,
+        ],
+      };
+      const result = await db.query(query);
+      const booking = result.rows[0];
+
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          message: 'Booking Successfully Changed',
+          Booking: booking,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this booking',
       });
     }
   }

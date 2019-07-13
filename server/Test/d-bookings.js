@@ -348,5 +348,30 @@ describe('Bookings', () => {
             });
         });
     });
+
+    it('it should Login and DELETE a specific booking using ID', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .delete('/api/v1/bookings/1')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
   });
 });
