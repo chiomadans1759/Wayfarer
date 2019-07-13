@@ -84,32 +84,5 @@ export default class TripsController {
     }
   }
 
-  // Admin can cancel trip
-  static async cancelATrip(req, res) {
-    try {
-      const query = {
-        text: 'UPDATE trips SET status=$1 WHERE trip_id=$2 returning *',
-        values: [
-          'cancelled',
-          req.trip.trip_id,
-        ],
-      };
-      const result = await db.query(query);
-      const booking = result.rows[0];
-
-      return res.status(200).json({
-        status: 'success',
-        data: {
-          message: 'Booking Successfully Changed',
-          Booking: booking,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this booking',
-      });
-    }
-  }
+  
 }

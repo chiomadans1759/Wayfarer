@@ -348,8 +348,11 @@ describe('Bookings', () => {
             });
         });
     });
+  });
 
-    it('it should Login and DELETE a specific booking using ID', (done) => {
+  // Test for Update booking
+  describe('/UPDATE Booking', () => {
+    it('it should Login, check token, and GET a specific trip by id', (done) => {
       chai.request(app)
         .post('/api/v1/login')
         .send(login)
@@ -362,8 +365,12 @@ describe('Bookings', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .delete('/api/v1/bookings/1')
+            .put('/api/v1/bookings/1')
             .set('x-access-token', token)
+            .send({
+              trip_id: 1,
+              seat_number: 7,
+            })
             .end((error, data) => {
               data.should.have.status(200);
               data.body.should.be.an('object');
@@ -374,4 +381,5 @@ describe('Bookings', () => {
         });
     });
   });
+
 });
