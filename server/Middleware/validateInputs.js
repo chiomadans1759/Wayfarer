@@ -200,61 +200,6 @@ const validateInputs = {
 
     return next();
   },
-
-  async bookings(req, res, next) {
-    const required = ['trip_id', 'seat_number'];
-    const query = {
-      text: 'select * from bookings where (trip_id, seat_number) = ($1, $2)',
-      values: [req.body.trip_id, req.body.seat_number],
-    };
-    const checkCapacity = {
-      text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trips.trip_id = $1',
-      values: [req.body.trip_id],
-    };
-    const result = await db.query(query);
-    const booking = result.rows[0];
-    const busCapacity = await db.query(checkCapacity);
-    const capacity = busCapacity.rows[0];
-
-    if (req.body.length < 1) {
-      return res.status(400).json({
-        status: 'error',
-        error: 'The request body must not be empty',
-      });
-    }
-
-    for (let i = 0; i < required.length; i += 1) {
-      if (!req.body[required[i]]) {
-        return res.status(400).json({
-          status: 'error',
-          error: `${required[i]} is required`,
-        });
-      }
-    }
-
-    if (!capacity) {
-      return res.status(400).json({
-        status: 'error',
-        error: 'This trip does not exist or has not been created yet',
-      });
-    }
-
-    if (booking) {
-      return res.status(400).json({
-        status: 'error',
-        error: 'This seat has already been booked',
-      });
-    }
-
-    if (req.body.seat_number > capacity.capacity) {
-      return res.status(400).json({
-        status: 'error',
-        error: `Please choose a seat number between 1 and ${capacity.capacity}`,
-      });
-    }
-
-    return next();
-  },
 };
 
 export default validateInputs;
