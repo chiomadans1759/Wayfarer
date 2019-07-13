@@ -82,7 +82,35 @@ export default class TripsController {
       if (trips.length < 1) {
         return res.status(404).json({
           status: 'error',
-          error: `There is no trip going to ${req.params.origin} at this time`,
+          error: `There is no trip going from ${req.params.origin} at this time`,
+        });
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: trips,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching trips',
+      });
+    }
+  }
+
+  // Filter Trips by Origin
+  static async filterTripsByDestination(req, res) {
+    try {
+      const query = {
+        text: 'select * from trips where LOWER(destination) = $1',
+        values: [req.params.destination],
+      };
+      const result = await db.query(query);
+      const trips = result.rows;
+
+      if (trips.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: `There is no trip going to ${req.params.destination} at this time`,
         });
       }
       return res.status(200).json({
