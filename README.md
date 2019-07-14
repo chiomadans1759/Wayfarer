@@ -41,7 +41,7 @@ e.g git clone https://github.com/chiomadans1759/Wayfarer
 3. Start the application by running the start script
 
 ```
-- npm start.
+- npm run dev.
 ``` 
 
 4. Install postman to test all endpoints on port 8000.
