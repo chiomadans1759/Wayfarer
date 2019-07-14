@@ -16,7 +16,6 @@ export default class BookingsController {
       };
       const findTrip = {
         text: 'select * from trips, buses where trips.trip_id = $1 AND trips.bus_id = buses.bus_id',
-        // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trip_id = $1',
         values: [req.body.trip_id],
       };
 
@@ -110,53 +109,4 @@ export default class BookingsController {
       });
     }
   }
-
-  // User can get all his/her bookings
-  // static async getUserBookings(req, res) {
-  //   try {
-  //     const query = {
-  //       text: 'select * from bookings where user_id = $1',
-  //       values: [req.user.user_id],
-  //     };
-  //     const result = await db.query(query);
-  //     const userBookings = result.rows;
-  //     return res.status(200).json({
-  //       status: 'success',
-  //       data: userBookings,
-  //     });
-  //   } catch (error) {
-  //     return res.status(500).json({
-  //       status: 'error',
-  //       error: 'Problem fetching this user\'s bookings',
-  //     });
-  //   }
-  // }
-
-  // User can get all his/her bookings
-  // static async getAUserBooking(req, res) {
-  //   try {
-  //     const query = {
-  //       text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
-  //       values: [req.user.user_id, req.body.booking_id],
-  //     };
-  //     const result = await db.query(query);
-  //     const userBooking = result.rows;
-
-  //     if (userBooking.length < 1) {
-  //       return res.status(404).json({
-  //         status: 'error',
-  //         error: 'This trip by this user does not exist',
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       status: 'success',
-  //       data: userBooking,
-  //     });
-  //   } catch (error) {
-  //     return res.status(500).json({
-  //       status: 'error',
-  //       error: 'Problem fetching this user\'s bookings',
-  //     });
-  //   }
-  // }
 }
