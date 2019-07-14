@@ -26,7 +26,7 @@ describe('Buses', () => {
   describe('/POST register a bus', () => {
     it('it should throw an error if the request body is empty', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -52,7 +52,7 @@ describe('Buses', () => {
 
     it('it should not create a bus without all required bus fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -83,7 +83,7 @@ describe('Buses', () => {
 
     it('it should throw an error if the capacity of the bus is NOT a number', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -115,7 +115,7 @@ describe('Buses', () => {
 
     it('it should register a bus with all required fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -148,7 +148,7 @@ describe('Buses', () => {
 
     it('it should return error if bus already exists', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -177,7 +177,7 @@ describe('Buses', () => {
   describe('/Get Buses', () => {
     it('it should return unauthorized if user is not logged in', (done) => {
       chai.request(app)
-        .get('/api/v1/users')
+        .get('/api/v1/buses')
         .end((error, res) => {
           res.should.have.status(401);
           res.body.should.be.an('object');
@@ -189,7 +189,7 @@ describe('Buses', () => {
 
     it('it should return unauthorized user if user is not an admin', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -214,7 +214,7 @@ describe('Buses', () => {
 
     it('it should Login, check token, and GET all registered buses', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -239,7 +239,7 @@ describe('Buses', () => {
 
     it('it should Login, check token, and GET a specific bus by id', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -264,7 +264,7 @@ describe('Buses', () => {
 
     it('it should return invalid id if id is not valid', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);

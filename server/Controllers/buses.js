@@ -5,9 +5,9 @@ export default class BusesController {
   static async addBus(req, res) {
     try {
       const query = {
-        text: 'insert into buses (user_id, number_plate, manufacturer, model, year, capacity) values ($1, $2, $3, $4, $5, $6) returning bus_id, user_id, number_plate, manufacturer, model, year, capacity',
+        text: 'insert into buses (user_id, number_plate, manufacturer, model, year, capacity) values ($1, $2, $3, $4, $5, $6) returning id, user_id, number_plate, manufacturer, model, year, capacity',
         values: [
-          req.user.user_id,
+          req.user.id,
           req.body.number_plate,
           req.body.manufacturer,
           req.body.model,
@@ -22,8 +22,8 @@ export default class BusesController {
       return res.status(201).json({
         status: 'success',
         data: {
-          bus_id: bus.bus_id,
-          user_id: req.user.user_id,
+          bus_id: bus.id,
+          user_id: req.user.id,
           number_plate: bus.number_plate,
           manufacturer: bus.manufacturer,
           model: bus.model,
@@ -36,7 +36,7 @@ export default class BusesController {
       return res.status(500)
         .json({
           status: 'error',
-          error: 'Problem registering this bus',
+          error: 'Server Error',
         });
     }
   }
@@ -54,7 +54,7 @@ export default class BusesController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching all buses',
+        error: 'Server Error',
       });
     }
   }
@@ -63,7 +63,7 @@ export default class BusesController {
   static async getABus(req, res) {
     try {
       const query = {
-        text: 'select * from buses where bus_id = $1 LIMIT 1',
+        text: 'select * from buses where id = $1 LIMIT 1',
         values: [req.params.id],
       };
       const result = await db.query(query);

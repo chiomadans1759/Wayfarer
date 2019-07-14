@@ -155,7 +155,7 @@ const validateInputs = {
 
   async trips(req, res, next) {
     const query = {
-      text: 'SELECT * FROM trips where trip_id = $1 LIMIT 1',
+      text: 'SELECT * FROM trips where id = $1 LIMIT 1',
       // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id where trip_id = $1 LIMIT 1',
       values: [req.params.id],
     };
@@ -180,7 +180,7 @@ const validateInputs = {
       values: [req.body.bus_id, req.body.trip_date],
     };
     const findBus = {
-      text: 'select * from buses where bus_id = $1 LIMIT 1',
+      text: 'select * from buses where id = $1 LIMIT 1',
       values: [req.body.bus_id],
     };
     const result = await db.query(query);
@@ -228,7 +228,7 @@ const validateInputs = {
       values: [req.body.trip_id, req.body.seat_number],
     };
     const checkCapacity = {
-      text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trips.trip_id = $1',
+      text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.id WHERE trips.id = $1',
       values: [req.body.trip_id],
     };
     const result = await db.query(query);
@@ -285,11 +285,11 @@ const validateInputs = {
 
   async bookings(req, res, next) {
     const query = req.user.is_admin === true ? {
-      text: 'select * from bookings where booking_id = $1 LIMIT 1',
+      text: 'select * from bookings where id = $1 LIMIT 1',
       values: [req.params.id],
     } : {
-      text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
-      values: [req.user.user_id, req.params.id],
+      text: 'select * from bookings where (user_id, id) = ($1, $2) LIMIT 1',
+      values: [req.user.id, req.params.id],
     };
     const result = await db.query(query);
     const booking = result.rows[0];

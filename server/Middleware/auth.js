@@ -4,7 +4,7 @@ import db from '../DB/config';
 const auth = {
   generateToken(user) {
     return jwt.sign({
-      user_id: user.user_id,
+      id: user.id,
       is_admin: user.is_admin,
     }, process.env.SECRET, { expiresIn: '7d' });
   },
@@ -39,7 +39,7 @@ const auth = {
       }
 
       const query = {
-        text: 'select * from users where user_id = $1 LIMIT 1', values: [decoded.payload.user_id],
+        text: 'select * from users where id = $1 LIMIT 1', values: [decoded.payload.id],
       };
       const result = await db.query(query);
 
@@ -56,7 +56,7 @@ const auth = {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Server  error',
+        error: 'Server error',
       });
     }
   },

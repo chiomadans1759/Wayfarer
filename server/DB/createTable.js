@@ -1,9 +1,8 @@
 import db from './config';
 
-// Create a table on the database for users
 db.query(
   `CREATE TABLE IF NOT EXISTS users (
-    user_id serial PRIMARY KEY,
+    id serial PRIMARY KEY,
     is_admin boolean NOT NULL,
     last_name varchar NOT NULL,
     first_name varchar NOT NULL,
@@ -17,10 +16,9 @@ db.query(
   },
 );
 
-// Create a table for buses
 db.query(
   `CREATE TABLE IF NOT EXISTS buses (
-    bus_id serial PRIMARY KEY,
+    id serial PRIMARY KEY,
     user_id integer NOT NULL,
     number_plate varchar NOT NULL,
     manufacturer varchar NOT NULL,
@@ -35,10 +33,9 @@ db.query(
   },
 );
 
-// Create a table for trips
 db.query(
   `CREATE TABLE IF NOT EXISTS trips (
-    trip_id serial PRIMARY KEY,
+    id serial PRIMARY KEY,
     bus_id integer NOT NULL,
     origin varchar NOT NULL,
     destination varchar NOT NULL,
@@ -55,7 +52,7 @@ db.query(
 
 db.query(
   `CREATE TABLE IF NOT EXISTS bookings (
-    booking_id serial PRIMARY KEY,
+    id serial PRIMARY KEY,
     seat_number integer NOT NULL,
     trip_id integer NOT NULL,
     user_id integer NOT NULL,

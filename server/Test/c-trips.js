@@ -26,7 +26,7 @@ describe('Trips', () => {
   describe('/POST register a trip', () => {
     it('it should throw an error if the request body is empty', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -52,7 +52,7 @@ describe('Trips', () => {
 
     it('it should not create a trip without all required trip fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -95,7 +95,7 @@ describe('Trips', () => {
 
     it('it should create a trip with all required fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -133,7 +133,7 @@ describe('Trips', () => {
 
     it('it should create a trip with all required fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -165,7 +165,7 @@ describe('Trips', () => {
 
     it('it should return error if trip already exists', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -194,7 +194,7 @@ describe('Trips', () => {
   describe('/Get Trips', () => {
     it('it should Login, check token, and GET all registered trips', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -219,7 +219,7 @@ describe('Trips', () => {
 
     it('it should filter trips by Origin', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -244,7 +244,7 @@ describe('Trips', () => {
 
     it('it should return an error if search doesn\'t match any Origin', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -258,7 +258,7 @@ describe('Trips', () => {
             .get('/api/v1/trips/origin/Awka')
             .set('x-access-token', token)
             .end((error, data) => {
-              data.should.have.status(400);
+              data.should.have.status(404);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('There is no trip going from Awka at this time');
@@ -269,7 +269,7 @@ describe('Trips', () => {
 
     it('it should filter trips by Destination', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -294,7 +294,7 @@ describe('Trips', () => {
 
     it('it should return an error if search doesn\'t match any origin', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -308,7 +308,7 @@ describe('Trips', () => {
             .get('/api/v1/trips/destination/Awka')
             .set('x-access-token', token)
             .end((error, data) => {
-              data.should.have.status(400);
+              data.should.have.status(404);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('There is no trip going to Awka at this time');
@@ -319,7 +319,7 @@ describe('Trips', () => {
 
     it('it should Login, check token, and GET a specific trip by id', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -344,7 +344,7 @@ describe('Trips', () => {
 
     it('it should return invalid id if id is not valid', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -372,7 +372,7 @@ describe('Trips', () => {
   describe('/PATCH Trip', () => {
     it('it should Login, check token, and GET a specific trip by id', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
