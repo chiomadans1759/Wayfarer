@@ -49,12 +49,17 @@ export default class BookingsController {
     }
   }
 
-  // Admin Gets all bookings
+  // Admin Gets all bookings and User gets all her/his bookings
   static async getAllBookings(req, res) {
     try {
-      const query = { text: 'SELECT * FROM bookings Inner JOIN users ON bookings.user_id = users.user_id' };
+      // const query = { text: 'SELECT * FROM bookings Inner JOIN users ON bookings.user_id = users.user_id' };
+      const query = req.user.is_admin === false ? {
+        text: 'select * from bookings where user_id = $1',
+        values: [req.user.user_id],
+      } : { text: 'SELECT * FROM bookings' };
       const result = await db.query(query);
       const bookings = result.rows;
+
       return res.status(200).json({
         status: 'success',
         data: bookings,
@@ -70,22 +75,33 @@ export default class BookingsController {
   // Admin can get a single booking and a user can get one of his/bookings by ID
   static async getABooking(req, res) {
     try {
-      const query = {
+      const query = req.user.is_admin === true ? {
         text: 'select * from bookings where booking_id = $1 LIMIT 1',
         values: [req.params.id],
+      } : {
+        text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
+        values: [req.user.user_id, req.params.id],
       };
       const result = await db.query(query);
-      const userBookings = result.rows;
+      const booking = result.rows;
 
-      if (userBookings.length < 1) {
+      if (booking.length < 1 && req.user.is_admin === false) {
         return res.status(404).json({
           status: 'error',
-          error: 'This trip does not exist',
+          error: 'This booking by this user does not exist',
         });
       }
+
+      if (booking.length < 1) {
+        return res.status(404).json({
+          status: 'error',
+          error: 'Booking with this ID doesn\'t exist',
+        });
+      }
+
       return res.status(200).json({
         status: 'success',
-        data: userBookings,
+        data: booking,
       });
     } catch (error) {
       return res.status(500).json({
@@ -96,51 +112,51 @@ export default class BookingsController {
   }
 
   // User can get all his/her bookings
-  static async getUserBookings(req, res) {
-    try {
-      const query = {
-        text: 'select * from bookings where user_id = $1',
-        values: [req.user.user_id],
-      };
-      const result = await db.query(query);
-      const userBookings = result.rows;
-      return res.status(200).json({
-        status: 'success',
-        data: userBookings,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this user\'s bookings',
-      });
-    }
-  }
+  // static async getUserBookings(req, res) {
+  //   try {
+  //     const query = {
+  //       text: 'select * from bookings where user_id = $1',
+  //       values: [req.user.user_id],
+  //     };
+  //     const result = await db.query(query);
+  //     const userBookings = result.rows;
+  //     return res.status(200).json({
+  //       status: 'success',
+  //       data: userBookings,
+  //     });
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       status: 'error',
+  //       error: 'Problem fetching this user\'s bookings',
+  //     });
+  //   }
+  // }
 
   // User can get all his/her bookings
-  static async getAUserBooking(req, res) {
-    try {
-      const query = {
-        text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
-        values: [req.user.user_id, req.body.booking_id],
-      };
-      const result = await db.query(query);
-      const userBooking = result.rows;
+  // static async getAUserBooking(req, res) {
+  //   try {
+  //     const query = {
+  //       text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
+  //       values: [req.user.user_id, req.body.booking_id],
+  //     };
+  //     const result = await db.query(query);
+  //     const userBooking = result.rows;
 
-      if (userBooking.length < 1) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'This trip by this user does not exist',
-        });
-      }
-      return res.status(200).json({
-        status: 'success',
-        data: userBooking,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this user\'s bookings',
-      });
-    }
-  }
+  //     if (userBooking.length < 1) {
+  //       return res.status(404).json({
+  //         status: 'error',
+  //         error: 'This trip by this user does not exist',
+  //       });
+  //     }
+  //     return res.status(200).json({
+  //       status: 'success',
+  //       data: userBooking,
+  //     });
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       status: 'error',
+  //       error: 'Problem fetching this user\'s bookings',
+  //     });
+  //   }
+  // }
 }

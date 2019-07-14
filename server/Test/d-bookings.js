@@ -1,146 +1,252 @@
-import db from '../DB/config';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import app from '../app';
 
-export default class BookingsController {
-  /* Adds a new user */
-  static async bookTrip(req, res) {
-    try {
-      const createdDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
-      const query = {
-        text: 'insert into bookings (trip_id, seat_number, user_id, created_on) values ($1, $2, $3, $4) returning booking_id, trip_id, seat_number, user_id, created_on',
-        values: [
-          req.body.trip_id,
-          req.body.seat_number,
-          req.user.user_id,
-          createdDate,
-        ],
-      };
-      const findTrip = {
-        text: 'select * from trips, buses where trips.trip_id = $1 AND trips.bus_id = buses.bus_id',
-        // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id WHERE trip_id = $1',
-        values: [req.body.trip_id],
-      };
+chai.use(chaiHttp);
+chai.should();
 
-      const result = await db.query(query);
-      const booking = result.rows[0];
-      const output = await db.query(findTrip);
-      const trip = output.rows[0];
+const booking = {
+  trip_id: 1,
+  seat_number: 2,
+};
+const login = {
+  email: 'victor@gmail.com',
+  password: 'victor419',
+};
+const admin = {
+  email: 'admin@gmail.com',
+  password: 'omadamsel',
+};
 
-      return res.status(201).json({
-        status: 'success',
-        data: {
-          booking_id: booking.booking_id,
-          user_id: req.user.user_id,
-          trip_id: booking.trip_id,
-          bus_id: trip.bus_id,
-          trip_date: trip.trip_date,
-          seat_number: req.body.seat_number,
-          first_name: req.user.first_name,
-          last_name: req.user.last_name,
-          email: req.user.email,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500)
-        .json({
-          status: 'error',
-          error: 'Problem booking a seat on this trip',
+describe('Bookings', () => {
+  // Test for creating new booking
+  describe('/POST register a booking', () => {
+    it('it should throw an error if the request body is empty', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/bookings')
+            .set('x-access-token', token)
+            .send([])
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('The request body must not be empty');
+              done();
+            });
         });
-    }
-  }
+    });
 
-  // Admin Gets all bookings
-  static async getAllBookings(req, res) {
-    try {
-      const query = { text: 'SELECT * FROM bookings Inner JOIN users ON bookings.user_id = users.user_id' };
-      const result = await db.query(query);
-      const bookings = result.rows;
-      return res.status(200).json({
-        status: 'success',
-        data: bookings,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching bookings',
-      });
-    }
-  }
+    it('it should not create a booking without all required fields', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
 
-  // Admin can get a single booking and a user can get one of his/bookings by ID
-  static async getABooking(req, res) {
-    try {
-      const query = {
-        text: 'select * from bookings where booking_id = $1 LIMIT 1',
-        values: [req.params.id],
-      };
-      const result = await db.query(query);
-      const userBookings = result.rows;
-
-      if (userBookings.length < 1) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'This trip does not exist',
+          chai.request(app)
+            .post('/api/v1/bookings')
+            .set('x-access-token', token)
+            .send({
+              trip_id: 1,
+            })
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('seat_number is required');
+              done();
+            });
         });
-      }
-      return res.status(200).json({
-        status: 'success',
-        data: userBookings,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this booking',
-      });
-    }
-  }
+    });
 
-  // User can get all his/her bookings
-  static async getUserBookings(req, res) {
-    try {
-      const query = {
-        text: 'select * from bookings where user_id = $1',
-        values: [req.user.user_id],
-      };
-      const result = await db.query(query);
-      const userBookings = result.rows;
-      return res.status(200).json({
-        status: 'success',
-        data: userBookings,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this user\'s bookings',
-      });
-    }
-  }
-
-  // User can get all his/her bookings
-  static async getAUserBooking(req, res) {
-    try {
-      const query = {
-        text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
-        values: [req.user.user_id, req.body.booking_id],
-      };
-      const result = await db.query(query);
-      const userBooking = result.rows;
-
-      if (userBooking.length < 1) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'This trip by this user does not exist',
+    it('it should return unauthorized if user is not logged in', (done) => {
+      chai.request(app)
+        .post('/api/v1/bookings')
+        .end((error, res) => {
+          res.should.have.status(401);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('No token provided.');
+          done();
         });
-      }
-      return res.status(200).json({
-        status: 'success',
-        data: userBooking,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: 'error',
-        error: 'Problem fetching this user\'s bookings',
-      });
-    }
-  }
-}
+    });
+
+    it('it should create a booking with all required fields', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/bookings')
+            .set('x-access-token', token)
+            .send(booking)
+            .end((error, data) => {
+              data.should.have.status(201);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              data.body.data.should.have.property('trip_id');
+              data.body.data.should.have.property('bus_id');
+              data.body.data.should.have.property('seat_number');
+              done();
+            });
+        });
+    });
+
+    it('it should return error if booking already exists', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/bookings')
+            .set('x-access-token', token)
+            .send(booking)
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('This seat has already been booked');
+              done();
+            });
+        });
+    });
+
+    it('it should return error if trip doesn\'t exist', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/bookings')
+            .set('x-access-token', token)
+            .send({
+              trip_id: 7,
+              seat_number: 2,
+            })
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('This trip does not exist or has not been created yet');
+              done();
+            });
+        });
+    });
+  });
+
+  // Test for Fetching existing bookings
+  describe('/Get Bookings', () => {
+    it('it should Login, check token, and GET all registered bookings', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should Login, check token, and GET a specific booking by id', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings/1')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(200);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              done();
+            });
+        });
+    });
+
+    it('it should return invalid id if id is not valid', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .get('/api/v1/bookings/p')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('This id is invalid. ID must be a number!');
+              done();
+            });
+        });
+    });
+  });
+});
