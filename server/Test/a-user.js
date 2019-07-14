@@ -25,7 +25,7 @@ describe('Users', () => {
   describe('/POST register users', () => {
     it('it should throw an error if the request body is empty', (done) => {
       chai.request(app)
-        .post('/api/v1/users')
+        .post('/api/v1/auth/signup')
         .send([])
         .end((error, res) => {
           res.should.have.status(400);
@@ -38,7 +38,7 @@ describe('Users', () => {
 
     it('it should not POST a user without all required user fields', (done) => {
       chai.request(app)
-        .post('/api/v1/users')
+        .post('/api/v1/auth/signup')
         .send({
           first_name: 'Okeke',
           last_name: 'Rilwan',
@@ -55,7 +55,7 @@ describe('Users', () => {
 
     it('it should check that password is atleast 6 characters', (done) => {
       chai.request(app)
-        .post('/api/v1/users')
+        .post('/api/v1/auth/signup')
         .send({
           first_name: 'Victor',
           last_name: 'Ugwueze',
@@ -73,7 +73,7 @@ describe('Users', () => {
 
     it('it should POST a user with all required fields', (done) => {
       chai.request(app)
-        .post('/api/v1/users')
+        .post('/api/v1/auth/signup')
         .send(user)
         .end((err, res) => {
           res.should.have.status(201);
@@ -91,7 +91,7 @@ describe('Users', () => {
 
     it('it should return error if user already exists', (done) => {
       chai.request(app)
-        .post('/api/v1/users')
+        .post('/api/v1/auth/signup')
         .send(user)
         .end((error, res) => {
           res.should.have.status(400);
@@ -107,7 +107,7 @@ describe('Users', () => {
   describe('/POST login users', () => {
     it('it should not login a user without email and password fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send({
           email: 'victorAdeoye@gmail.com',
         })
@@ -122,7 +122,7 @@ describe('Users', () => {
 
     it('it should return error if user is not registered', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send({
           email: 'tosin@gmail.com',
           password: 'tosinf419',
@@ -138,7 +138,7 @@ describe('Users', () => {
 
     it('it should login a registered user and generate an access token', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((error, res) => {
           res.should.have.status(200);
@@ -156,7 +156,7 @@ describe('Users', () => {
 
     it('it should return error if user\'s password is not correct', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send({
           email: 'victor@gmail.com',
           password: 'victor',
@@ -175,7 +175,7 @@ describe('Users', () => {
   describe('/Get Users', () => {
     it('it should return unauthorized if user is not logged in', (done) => {
       chai.request(app)
-        .get('/api/v1/users')
+        .get('/api/v1/auth/signup')
         .end((error, res) => {
           res.should.have.status(401);
           res.body.should.be.an('object');
@@ -187,7 +187,7 @@ describe('Users', () => {
 
     it('it should return unauthorized user if user is not an admin', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -198,7 +198,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/users')
+            .get('/api/v1/auth/signup')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(401);
@@ -212,7 +212,7 @@ describe('Users', () => {
 
     it('it should Login, check token, and GET all users', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -223,7 +223,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/users')
+            .get('/api/v1/auth/signup')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(200);
@@ -237,7 +237,7 @@ describe('Users', () => {
 
     it('it should Login, check token, and GET a specific user by id', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -248,7 +248,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/users/1')
+            .get('/api/v1/auth/signup/1')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(200);
@@ -262,7 +262,7 @@ describe('Users', () => {
 
     it('it should return invalid id if id is not valid', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -273,7 +273,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/users/p')
+            .get('/api/v1/auth/signup/p')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(400);

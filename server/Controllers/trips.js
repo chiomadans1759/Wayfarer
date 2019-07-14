@@ -17,7 +17,7 @@ export default class TripsController {
         ],
       };
       const findBus = {
-        text: 'select * from buses where bus_id = $1',
+        text: 'select * from buses where id = $1',
         values: [req.body.bus_id],
       };
       const result = await db.query(query);
@@ -28,24 +28,20 @@ export default class TripsController {
       return res.status(201).json({
         status: 'success',
         data: {
-          trip_id: trip.trip_id,
+          trip_id: trip.id,
           bus_id: trip.bus_id,
           origin: trip.origin,
           destination: trip.destination,
           trip_date: Date(trip.trip_date),
           fare: trip.fare,
           status: 'active',
-          number_plate: bus.number_plate,
-          manufacturer: bus.manufacturer,
-          model: bus.model,
           capacity: bus.capacity,
-          year: bus.year,
         },
       });
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem creating trips',
+        error: 'Server Error',
       });
     }
   }
@@ -64,7 +60,7 @@ export default class TripsController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching trips',
+        error: 'Server Error',
       });
     }
   }
@@ -74,7 +70,7 @@ export default class TripsController {
     try {
       const query = {
         text: 'select * from trips where LOWER(origin) = $1',
-        values: [req.params.origin],
+        values: [req.params.origin.toLowerCase()],
       };
       const result = await db.query(query);
       const trips = result.rows;
@@ -92,7 +88,7 @@ export default class TripsController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching trips',
+        error: 'Server Error',
       });
     }
   }
@@ -102,7 +98,7 @@ export default class TripsController {
     try {
       const query = {
         text: 'select * from trips where LOWER(destination) = $1',
-        values: [req.params.destination],
+        values: [req.params.destination.toLowerCase()],
       };
       const result = await db.query(query);
       const trips = result.rows;
@@ -110,7 +106,9 @@ export default class TripsController {
       if (trips.length < 1) {
         return res.status(404).json({
           status: 'error',
-          error: `There is no trip going to ${req.params.destination} at this time`,
+          error: `There is no trip going to ${
+            req.params.destination
+          } at this time`,
         });
       }
       return res.status(200).json({
@@ -120,7 +118,7 @@ export default class TripsController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching trips',
+        error: 'Server Error',
       });
     }
   }
@@ -135,7 +133,7 @@ export default class TripsController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching this trip',
+        error: 'Server Error',
       });
     }
   }
@@ -144,11 +142,8 @@ export default class TripsController {
   static async cancelATrip(req, res) {
     try {
       const query = {
-        text: 'UPDATE trips SET status=$1 WHERE trip_id=$2 returning *',
-        values: [
-          'cancelled',
-          req.trip.trip_id,
-        ],
+        text: 'UPDATE trips SET status=$1 WHERE id=$2 returning *',
+        values: ['cancelled', req.trip.trip_id],
       };
       const result = await db.query(query);
       const booking = result.rows[0];
@@ -156,14 +151,14 @@ export default class TripsController {
       return res.status(200).json({
         status: 'success',
         data: {
-          message: 'Booking Successfully Changed',
+          message: 'Trip Cancelled Successfully',
           Booking: booking,
         },
       });
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching this booking',
+        error: 'Server Error',
       });
     }
   }

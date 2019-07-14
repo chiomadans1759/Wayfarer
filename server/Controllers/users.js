@@ -31,7 +31,7 @@ export default class UserController {
       return res.status(500)
         .json({
           status: 'error',
-          error: 'Problem creating user',
+          error: 'Server Error',
         });
     }
   }
@@ -47,9 +47,10 @@ export default class UserController {
         data: users,
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching all users',
+        error: 'Server Error',
       });
     }
   }
@@ -58,7 +59,7 @@ export default class UserController {
   static async getAUser(req, res) {
     try {
       const query = {
-        text: 'select * from users where user_id = $1 LIMIT 1',
+        text: 'select * from users where id = $1 LIMIT 1',
         values: [req.params.id],
       };
       const result = await db.query(query);
@@ -78,7 +79,7 @@ export default class UserController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        error: 'Problem fetching this user',
+        error: 'Server Error',
       });
     }
   }

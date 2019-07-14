@@ -23,7 +23,7 @@ describe('Bookings', () => {
   describe('/POST register a booking', () => {
     it('it should throw an error if the request body is empty', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -49,7 +49,7 @@ describe('Bookings', () => {
 
     it('it should not create a booking without all required fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -89,7 +89,7 @@ describe('Bookings', () => {
 
     it('it should create a booking with all required fields', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -118,7 +118,7 @@ describe('Bookings', () => {
 
     it('it should return error if booking already exists', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -144,7 +144,7 @@ describe('Bookings', () => {
 
     it('it should return error if trip doesn\'t exist', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -176,7 +176,7 @@ describe('Bookings', () => {
   describe('/Get Bookings', () => {
     it('it should Login an admin and GET all registered bookings', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -201,7 +201,7 @@ describe('Bookings', () => {
 
     it('it should Login a GET all registered bookings by this user', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -226,7 +226,7 @@ describe('Bookings', () => {
 
     it('it should Login and GET any booking by ID if user is admin', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -251,7 +251,7 @@ describe('Bookings', () => {
 
     it('it should Login and GET a specific booking by a user using ID', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -276,7 +276,7 @@ describe('Bookings', () => {
 
     it('it should return error if booking doesn\'t exist', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -301,7 +301,7 @@ describe('Bookings', () => {
 
     it('it should return error if booking by this user doesn\'t exist', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
@@ -326,7 +326,7 @@ describe('Bookings', () => {
 
     it('it should return invalid id if id is not valid', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
@@ -354,7 +354,7 @@ describe('Bookings', () => {
   describe('/UPDATE Booking', () => {
     it('it should Login, check token, and UPDATE a specific booking by id', (done) => {
       chai.request(app)
-        .post('/api/v1/login')
+        .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
