@@ -8,8 +8,8 @@ import validateInputs from '../Middleware/validateInputs';
 export default (server) => {
   /* Users Routes Here */
   server.post('/api/v1/auth/signup', validateInputs.users, UserController.addUser);
-  server.get('/api/v1/auth/signup', auth.verifyUserToken, auth.verifyAdmin, UserController.getAllUsers);
-  server.get('/api/v1/auth/signup/:id', auth.verifyUserToken, validateInputs.validateId, auth.verifyAdmin, UserController.getAUser);
+  server.get('/api/v1/users', auth.verifyUserToken, auth.verifyAdmin, UserController.getAllUsers);
+  server.get('/api/v1/users/:id', auth.verifyUserToken, validateInputs.validateId, auth.verifyAdmin, UserController.getAUser);
   server.post('/api/v1/auth/signin', validateInputs.userLogin, UserController.loginUser);
 
   /* Buses Routes Here */
