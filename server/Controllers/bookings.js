@@ -88,7 +88,36 @@ export default class BookingsController {
   }
 
   // Admin/User can change their booking
-  
+  static async updateABooking(req, res) {
+    try {
+      const query = {
+        text: 'UPDATE bookings SET trip_id=$1, seat_number=$2, created_on=$3, user_id=$4 WHERE booking_id=$5 returning *',
+        values: [
+          req.body.trip_id,
+          req.body.seat_number,
+          createdDate,
+          req.user.user_id,
+          req.booking.booking_id,
+        ],
+      };
+      const result = await db.query(query);
+      const booking = result.rows[0];
+
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          message: 'Booking Successfully Changed',
+          Booking: booking,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this booking',
+      });
+    }
+  }
 
   // Admin/User can delete their booking
   static async deleteABooking(req, res) {
