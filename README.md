@@ -48,7 +48,7 @@ e.g git clone https://github.com/chiomadans1759/Wayfarer
 
 ### Test
 
-run test using 'npm test'.
+run test using `npm test`.
 
 ## Features
 
