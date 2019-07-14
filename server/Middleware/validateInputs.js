@@ -235,7 +235,6 @@ const validateInputs = {
     const booking = result.rows[0];
     const busCapacity = await db.query(checkCapacity);
     const capacity = busCapacity.rows[0];
-    console.log(capacity);
 
     if (req.body.length < 1) {
       return res.status(400).json({
@@ -254,7 +253,7 @@ const validateInputs = {
     }
 
     if (!capacity) {
-      return res.status(400).json({
+      return res.status(404).json({
         status: 'error',
         error: 'This trip does not exist or has not been created yet',
       });

@@ -108,6 +108,44 @@ describe('Trips', () => {
           chai.request(app)
             .post('/api/v1/trips')
             .set('x-access-token', token)
+            .send({
+              bus_id: 1,
+              origin: 'Lagos',
+              destination: 'Benin',
+              trip_date: '04-09-2019',
+              fare: 'N5,600',
+            })
+            .end((error, data) => {
+              data.should.have.status(201);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('success');
+              data.body.should.have.property('data');
+              data.body.data.should.have.property('trip_id');
+              data.body.data.should.have.property('bus_id');
+              data.body.data.should.have.property('origin');
+              data.body.data.should.have.property('destination');
+              data.body.data.should.have.property('trip_date');
+              data.body.data.should.have.property('fare');
+              done();
+            });
+        });
+    });
+
+    it('it should create a trip with all required fields', (done) => {
+      chai.request(app)
+        .post('/api/v1/login')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/trips')
+            .set('x-access-token', token)
             .send(trip)
             .end((error, data) => {
               data.should.have.status(201);

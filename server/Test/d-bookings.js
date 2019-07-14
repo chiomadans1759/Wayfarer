@@ -6,7 +6,7 @@ chai.use(chaiHttp);
 chai.should();
 
 const booking = {
-  trip_id: 1,
+  trip_id: 2,
   seat_number: 2,
 };
 const login = {
@@ -162,7 +162,7 @@ describe('Bookings', () => {
               seat_number: 2,
             })
             .end((error, data) => {
-              data.should.have.status(400);
+              data.should.have.status(404);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('This trip does not exist or has not been created yet');
@@ -352,7 +352,7 @@ describe('Bookings', () => {
 
   // Test for Update booking
   describe('/UPDATE Booking', () => {
-    it('it should Login, check token, and GET a specific trip by id', (done) => {
+    it('it should Login, check token, and UPDATE a specific booking by id', (done) => {
       chai.request(app)
         .post('/api/v1/login')
         .send(login)
@@ -381,5 +381,4 @@ describe('Bookings', () => {
         });
     });
   });
-
 });
