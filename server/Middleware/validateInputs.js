@@ -201,7 +201,7 @@ const validateInputs = {
     return next();
   },
 
-  async bookings(req, res, next) {
+  async addBookings(req, res, next) {
     const required = ['trip_id', 'seat_number'];
     const query = {
       text: 'select * from bookings where (trip_id, seat_number) = ($1, $2)',
@@ -250,6 +250,35 @@ const validateInputs = {
       return res.status(400).json({
         status: 'error',
         error: `Please choose a seat number between 1 and ${capacity.capacity}`,
+      });
+    }
+
+    return next();
+  },
+
+  async bookings(req, res, next) {
+    const query = req.user.is_admin === true ? {
+      text: 'select * from bookings where booking_id = $1 LIMIT 1',
+      values: [req.params.id],
+    } : {
+      text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
+      values: [req.user.user_id, req.params.id],
+    };
+    const result = await db.query(query);
+    const booking = result.rows;
+    req.booking = booking;
+
+    if (booking.length < 1 && req.user.is_admin === false) {
+      return res.status(404).json({
+        status: 'error',
+        error: 'This booking by this user does not exist',
+      });
+    }
+
+    if (booking.length < 1) {
+      return res.status(404).json({
+        status: 'error',
+        error: 'Booking with this ID doesn\'t exist',
       });
     }
 

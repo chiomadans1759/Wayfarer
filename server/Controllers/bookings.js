@@ -74,35 +74,37 @@ export default class BookingsController {
   // Admin can get a single booking and a user can get one of his/bookings by ID
   static async getABooking(req, res) {
     try {
-      const query = req.user.is_admin === true ? {
-        text: 'select * from bookings where booking_id = $1 LIMIT 1',
+      return res.status(200).json({
+        status: 'success',
+        data: req.booking,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 'error',
+        error: 'Problem fetching this booking',
+      });
+    }
+  }
+
+  static async deleteABooking(req, res) {
+    try {
+      const queryDelete = req.user.is_admin === true ? {
+        text: 'DELETE from bookings where booking_id = $1',
         values: [req.params.id],
       } : {
-        text: 'select * from bookings where (user_id, booking_id) = ($1, $2) LIMIT 1',
+        text: 'DELETE from bookings where (user_id, booking_id) = ($1, $2)',
         values: [req.user.user_id, req.params.id],
       };
-      const result = await db.query(query);
-      const booking = result.rows;
-
-      if (booking.length < 1 && req.user.is_admin === false) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'This booking by this user does not exist',
-        });
-      }
-
-      if (booking.length < 1) {
-        return res.status(404).json({
-          status: 'error',
-          error: 'Booking with this ID doesn\'t exist',
-        });
-      }
+      await db.query(queryDelete);
 
       return res.status(200).json({
         status: 'success',
-        data: booking,
+        data: {
+          message: 'Booking Deleted Successfully',
+        },
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: 'error',
         error: 'Problem fetching this booking',
