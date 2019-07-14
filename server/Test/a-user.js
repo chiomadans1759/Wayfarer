@@ -175,7 +175,7 @@ describe('Users', () => {
   describe('/Get Users', () => {
     it('it should return unauthorized if user is not logged in', (done) => {
       chai.request(app)
-        .get('/api/v1/auth/signup')
+        .get('/api/v1/users')
         .end((error, res) => {
           res.should.have.status(401);
           res.body.should.be.an('object');
@@ -198,7 +198,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/auth/signup')
+            .get('/api/v1/users')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(401);
@@ -223,7 +223,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/auth/signup')
+            .get('/api/v1/users')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(200);
@@ -248,7 +248,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/auth/signup/1')
+            .get('/api/v1/users/1')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(200);
@@ -273,7 +273,7 @@ describe('Users', () => {
           const { token } = res.body.data;
 
           chai.request(app)
-            .get('/api/v1/auth/signup/p')
+            .get('/api/v1/users/p')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(400);

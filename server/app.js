@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import bodyParser from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
 import Route from './Routes/routes';
+import * as swaggerDocs from './swagger.json';
 
 dotenv.config();
 const app = express();
@@ -17,11 +19,18 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// use swagger for documentation
+app.use('/', swaggerUi.serve);
+
 Route(app);
 
 // define routes
+app.get('/docs', swaggerUi.setup(swaggerDocs));
 app.get('/', (req, res) => {
   res.json({ Message: 'Welcome! This is the Wayfarer home page.' });
+});
+app.get('*', (req, res) => {
+  res.json({ Message: 'Endpoint Not Found' });
 });
 
 // get the port from the process env
