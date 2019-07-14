@@ -18,13 +18,15 @@ export default (server) => {
   server.get('/api/v1/buses/:id', auth.verifyUserToken, validateInputs.validateId, auth.verifyAdmin, BusesController.getABus);
 
   /* Trips Routes Here */
-  server.post('/api/v1/trips', auth.verifyUserToken, auth.verifyAdmin, validateInputs.trips, TripsController.addTrip);
+  server.post('/api/v1/trips', auth.verifyUserToken, auth.verifyAdmin, validateInputs.addTrips, TripsController.addTrip);
   server.get('/api/v1/trips', auth.verifyUserToken, TripsController.getTrips);
-  server.get('/api/v1/trips/:id', auth.verifyUserToken, validateInputs.validateId, TripsController.getATrip);
+  server.get('/api/v1/trips/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.trips, TripsController.getATrip);
+  server.patch('/api/v1/trips/:id', auth.verifyUserToken, auth.verifyAdmin, validateInputs.validateId, validateInputs.trips, TripsController.cancelATrip);
 
   /* Bookings Routes Here */
   server.post('/api/v1/bookings', auth.verifyUserToken, validateInputs.addBookings, BookingsController.bookTrip);
   server.get('/api/v1/bookings', auth.verifyUserToken, BookingsController.getAllBookings);
   server.get('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.getABooking);
   server.delete('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.deleteABooking);
+  server.put('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.updateABooking);
 };

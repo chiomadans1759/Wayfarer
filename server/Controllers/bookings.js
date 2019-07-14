@@ -1,10 +1,11 @@
 import db from '../DB/config';
 
+
+const createdDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
 export default class BookingsController {
   /* Adds a new user */
   static async bookTrip(req, res) {
     try {
-      const createdDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
       const query = {
         text: 'insert into bookings (trip_id, seat_number, user_id, created_on) values ($1, $2, $3, $4) returning booking_id, trip_id, seat_number, user_id, created_on',
         values: [
@@ -86,6 +87,10 @@ export default class BookingsController {
     }
   }
 
+  // Admin/User can change their booking
+  
+
+  // Admin/User can delete their booking
   static async deleteABooking(req, res) {
     try {
       const queryDelete = req.user.is_admin === true ? {

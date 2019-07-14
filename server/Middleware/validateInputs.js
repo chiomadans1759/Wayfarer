@@ -154,6 +154,26 @@ const validateInputs = {
   },
 
   async trips(req, res, next) {
+    const query = {
+      text: 'SELECT * FROM trips where trip_id = $1 LIMIT 1',
+      // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id where trip_id = $1 LIMIT 1',
+      values: [req.params.id],
+    };
+    const result = await db.query(query);
+    const trip = result.rows[0];
+    req.trip = trip;
+
+    if (!trip) {
+      return res.status(404).json({
+        status: 'error',
+        error: 'This trip does not exist',
+      });
+    }
+
+    return next();
+  },
+
+  async addTrips(req, res, next) {
     const required = ['bus_id', 'origin', 'destination', 'trip_date', 'fare'];
     const query = {
       text: 'select * from trips where (bus_id, trip_date) = ($1, $2)',
@@ -215,6 +235,7 @@ const validateInputs = {
     const booking = result.rows[0];
     const busCapacity = await db.query(checkCapacity);
     const capacity = busCapacity.rows[0];
+    console.log(capacity);
 
     if (req.body.length < 1) {
       return res.status(400).json({
@@ -236,6 +257,13 @@ const validateInputs = {
       return res.status(400).json({
         status: 'error',
         error: 'This trip does not exist or has not been created yet',
+      });
+    }
+
+    if (capacity.status === 'cancelled') {
+      return res.status(404).json({
+        status: 'error',
+        error: 'This trip has been cancelled and is no available for booking',
       });
     }
 
@@ -265,17 +293,17 @@ const validateInputs = {
       values: [req.user.user_id, req.params.id],
     };
     const result = await db.query(query);
-    const booking = result.rows;
+    const booking = result.rows[0];
     req.booking = booking;
 
-    if (booking.length < 1 && req.user.is_admin === false) {
+    if (!booking && req.user.is_admin === false) {
       return res.status(404).json({
         status: 'error',
         error: 'This booking by this user does not exist',
       });
     }
 
-    if (booking.length < 1) {
+    if (!booking) {
       return res.status(404).json({
         status: 'error',
         error: 'Booking with this ID doesn\'t exist',
