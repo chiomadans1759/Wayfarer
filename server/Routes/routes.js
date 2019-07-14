@@ -22,6 +22,7 @@ export default (server) => {
   server.get('/api/v1/trips', auth.verifyUserToken, TripsController.getTrips);
   server.get('/api/v1/trips/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.trips, TripsController.getATrip);
   server.get('/api/v1/trips/origin/:origin', auth.verifyUserToken, TripsController.filterTripsByOrigin);
+  server.get('/api/v1/trips/destination/:destination', auth.verifyUserToken, TripsController.filterTripsByDestination);
   server.patch('/api/v1/trips/:id', auth.verifyUserToken, auth.verifyAdmin, validateInputs.validateId, validateInputs.trips, TripsController.cancelATrip);
 
   /* Bookings Routes Here */

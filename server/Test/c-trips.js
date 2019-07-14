@@ -261,7 +261,7 @@ describe('Trips', () => {
               data.should.have.status(400);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
-              data.body.should.have.property('error').eql('There is no trip going to Awka at this time');
+              data.body.should.have.property('error').eql('There is no trip going from Awka at this time');
               done();
             });
         });
