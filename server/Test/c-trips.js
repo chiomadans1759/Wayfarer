@@ -81,18 +81,6 @@ describe('Trips', () => {
         });
     });
 
-    it('it should return unauthorized if user is not logged in', (done) => {
-      chai.request(app)
-        .post('/api/v1/trips')
-        .end((error, res) => {
-          res.should.have.status(401);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('error');
-          res.body.should.have.property('error').eql('No token provided.');
-          done();
-        });
-    });
-
     it('it should create a trip with all required fields', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
@@ -128,6 +116,18 @@ describe('Trips', () => {
               data.body.data.should.have.property('fare');
               done();
             });
+        });
+    });
+
+    it('it should return unauthorized if user is not logged in', (done) => {
+      chai.request(app)
+        .post('/api/v1/trips')
+        .end((error, res) => {
+          res.should.have.status(401);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('No token provided.');
+          done();
         });
     });
 
