@@ -42,7 +42,7 @@ export default class TripsController {
       console.log(error);
       return res.status(500).json({
         status: 'error',
-        error: 'Server Error',
+        error,
       });
     }
   }
