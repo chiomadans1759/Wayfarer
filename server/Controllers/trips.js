@@ -28,7 +28,7 @@ export default class TripsController {
       return res.status(201).json({
         status: 'success',
         data: {
-          trip_id: trip.id,
+          id: trip.id,
           bus_id: trip.bus_id,
           origin: trip.origin,
           destination: trip.destination,
