@@ -52,9 +52,9 @@ export default class BookingsController {
   static async getAllBookings(req, res) {
     try {
       const query = req.user.is_admin === false ? {
-        text: 'select * from bookings where user_id = $1',
+        text: 'select * from bookings INNER JOIN users ON bookings.user_id = users.id where user_id = $1',
         values: [req.user.id],
-      } : { text: 'SELECT * FROM bookings' };
+      } : { text: 'SELECT * FROM bookings INNER JOIN users ON bookings.user_id = users.id' };
       const result = await db.query(query);
       const bookings = result.rows;
 
