@@ -36,12 +36,12 @@ db.query(
 db.query(
   `CREATE TABLE IF NOT EXISTS trips (
     id serial PRIMARY KEY,
-    bus_id integer DEFAULT NULL,
-    origin varchar DEFAULT NULL,
-    destination varchar DEFAULT NULL,
-    trip_date varchar DEFAULT NULL,
-    fare varchar DEFAULT NULL,
-    status varchar DEFAULT NULL
+    bus_id integer NOT NULL,
+    origin varchar NOT NULL,
+    destination varchar NOT NULL,
+    trip_date date NOT NULL,
+    fare varchar NOT NULL,
+    status varchar NOT NULL
 )`,
   (err) => {
     if (err) {
