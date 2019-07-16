@@ -104,7 +104,7 @@ describe('Trips', () => {
               fare: 'N5,600',
             })
             .end((error, data) => {
-              data.should.have.status(500);
+              data.should.have.status(201);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
@@ -148,7 +148,7 @@ describe('Trips', () => {
             .set('x-access-token', token)
             .send(trip)
             .end((error, data) => {
-              data.should.have.status(500);
+              data.should.have.status(201);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
