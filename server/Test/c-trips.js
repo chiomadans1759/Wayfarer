@@ -108,7 +108,7 @@ describe('Trips', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
-              data.body.data.should.have.property('trip_id');
+              data.body.data.should.have.property('id');
               data.body.data.should.have.property('bus_id');
               data.body.data.should.have.property('origin');
               data.body.data.should.have.property('destination');
@@ -152,7 +152,7 @@ describe('Trips', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
-              data.body.data.should.have.property('trip_id');
+              data.body.data.should.have.property('id');
               data.body.data.should.have.property('bus_id');
               data.body.data.should.have.property('origin');
               data.body.data.should.have.property('destination');
