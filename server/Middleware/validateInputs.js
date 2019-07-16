@@ -156,7 +156,6 @@ const validateInputs = {
   async trips(req, res, next) {
     const query = {
       text: 'SELECT * FROM trips where id = $1 LIMIT 1',
-      // text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id where trip_id = $1 LIMIT 1',
       values: [req.params.id],
     };
     const result = await db.query(query);
