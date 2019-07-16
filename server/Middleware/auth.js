@@ -21,7 +21,16 @@ const auth = {
 
   async verifyUserToken(req, res, next) {
     try {
-      const token = req.headers['x-access-token'];
+      let token;
+
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ');
+      } else if (req.headers['x-access-token']) {
+        token = req.headers['x-access-token'];
+      } else if (req.headers.token) {
+        token = req.headers.token;
+      }
+
       const decoded = auth.verifyToken(token);
 
       if (!token) {
