@@ -78,7 +78,6 @@ export default class BookingsController {
         data: req.booking,
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: 'error',
         error: 'Problem fetching this booking',
