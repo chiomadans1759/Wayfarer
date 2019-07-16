@@ -73,7 +73,15 @@ const auth = {
 
   async verifyAdmin(req, res, next) {
     try {
-      const token = req.headers['x-access-token'];
+      let token;
+
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+      } else if (req.headers['x-access-token']) {
+        token = req.headers['x-access-token'];
+      } else if (req.headers.token) {
+        token = req.headers.token;
+      }
       const decoded = auth.verifyToken(token);
 
       if (decoded.payload.is_admin !== true) {

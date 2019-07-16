@@ -3,7 +3,7 @@ import db from '../DB/config';
 export default class TripsController {
   // create a new Trip
   static async addTrip(req, res) {
-    // try {
+    try {
       const query = {
         text:
           'insert into trips (bus_id, origin, destination, trip_date, fare, status) values ($1, $2, $3, $4, $5, $6) returning *',
@@ -38,13 +38,13 @@ export default class TripsController {
           capacity: bus.capacity,
         },
       });
-    // } catch (error) {
-    //   console.log(error, 'There is an error here');
-    //   return res.status(500).json({
-    //     status: 'error',
-    //     error: 'Server Error',
-    //   });
-    // }
+    } catch (error) {
+      console.log(error, 'There is an error here');
+      return res.status(500).json({
+        status: 'error',
+        error: 'Server Error',
+      });
+    }
   }
 
   // Get all available trips
