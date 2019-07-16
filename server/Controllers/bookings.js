@@ -10,7 +10,7 @@ export default class BookingsController {
         text: 'insert into bookings (trip_id, seat_number, user_id, created_on) values ($1, $2, $3, $4) returning id, trip_id, seat_number, user_id, created_on',
         values: [
           req.body.trip_id,
-          req.body.seat_number,
+          1,
           req.user.id,
           createdDate,
         ],
