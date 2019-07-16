@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import jwt from 'jsonwebtoken';
 import db from '../DB/config';
 
