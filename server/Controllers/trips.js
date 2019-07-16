@@ -25,7 +25,7 @@ export default class TripsController {
       const output = await db.query(findBus);
       const bus = output.rows[0];
 
-      return res.status(500).json({
+      return res.status(201).json({
         status: 'success',
         data: {
           trip_id: trip.id,
