@@ -6,7 +6,7 @@ export default class TripsController {
     try {
       const query = {
         text:
-          'insert into trips (bus_id, origin, destination, trip_date, fare, status) values ($1, $2, $3, $4, $5, $6) returning *',
+          'insert into trips (bus_id, origin, destination, trip_date, fare, status) values ($1, $2, $3, $4, $5, $6) returning id, bus_id, origin, destination, trip_date, fare, status',
         values: [
           req.body.bus_id,
           req.body.origin,
