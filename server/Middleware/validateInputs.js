@@ -292,7 +292,7 @@ const validateInputs = {
       values: [req.user.id, req.params.id],
     };
     const result = await db.query(query);
-    const booking = result.rows[0];
+    const booking = result.rows;
     req.booking = booking;
 
     if (!booking && req.user.is_admin === false) {
