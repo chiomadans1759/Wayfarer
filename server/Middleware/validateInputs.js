@@ -3,9 +3,15 @@ import db from '../DB/config';
 
 const validateInputs = {
   async users(req, res, next) {
-    const emailFilter = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailFilter = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+    const passwordCheck = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
+    const textCheck = /^([A-Za-z])/;
     const required = ['email', 'first_name', 'last_name', 'password'];
     const email = emailFilter.test(String(req.body.email).toLowerCase());
+    const password = passwordCheck.test(String(req.body.password));
+    const lastName = textCheck.test(String(req.body.first_name).toLowerCase());
+    const firstName = textCheck.test(String(req.body.first_name).toLowerCase());
+
     const query = {
       text: 'select * from users where email = $1',
       values: [req.body.email],
@@ -13,7 +19,7 @@ const validateInputs = {
     const result = await db.query(query);
     const user = result.rows;
 
-    if (req.body.length < 1) {
+    if (req.body.length < 1 || req.body.length > 4) {
       return res.status(400).json({
         status: 'error',
         error: 'The request body must not be empty',
@@ -27,12 +33,33 @@ const validateInputs = {
           error: `${required[i]} is required`,
         });
       }
+
+      if (!req.body[required[i]]) {
+        return res.status(400).json({
+          status: 'error',
+          error: 'You can only enter the required fields',
+        });
+      }
     }
 
     if (!email) {
       return res.status(400).json({
         status: 'error',
         error: 'Invalid format for email',
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'Password must contain atleast one of a special char and a digit',
+      });
+    }
+
+    if (!firstName && !lastName) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'Firstname and Lastname must be a text',
       });
     }
 
@@ -87,7 +114,7 @@ const validateInputs = {
     if (!user) {
       return res.status(400).json({
         status: 'error',
-        error: 'This email is not registered on our database',
+        error: 'This user\'s details is not registered on our platform',
       });
     }
 
@@ -95,7 +122,7 @@ const validateInputs = {
     if (!check) {
       return res.status(400).json({
         status: 'error',
-        error: 'This password doesn\'t match our record',
+        error: 'This user\'s details is not registered on our platform',
       });
     }
 

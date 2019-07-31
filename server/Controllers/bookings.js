@@ -3,14 +3,14 @@ import db from '../DB/config';
 
 const createdDate = new Date().toJSON().slice(0, 10).replace(/-/g, '/');
 export default class BookingsController {
-  /* Adds a new user */
+  /* Create booking */
   static async bookTrip(req, res) {
     try {
       const query = {
         text: 'insert into bookings (trip_id, seat_number, user_id, created_on) values ($1, $2, $3, $4) returning id, trip_id, seat_number, user_id, created_on',
         values: [
           req.body.trip_id,
-          1,
+          req.body.seat_number,
           req.user.id,
           createdDate,
         ],
@@ -54,7 +54,7 @@ export default class BookingsController {
       const query = req.user.is_admin === false ? {
         text: 'select * from bookings INNER JOIN users ON bookings.user_id = users.id where user_id = $1',
         values: [req.user.id],
-      } : { text: 'SELECT * FROM bookings INNER JOIN users ON bookings.user_id = users.id' };
+      } : { text: 'SELECT * FROM users INNER JOIN bookings ON bookings.user_id = users.id' };
       const result = await db.query(query);
       const bookings = result.rows;
 

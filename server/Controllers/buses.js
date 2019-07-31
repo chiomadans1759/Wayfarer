@@ -15,7 +15,7 @@ export default class BusesController {
           req.body.capacity,
         ],
       };
-    
+   
       const result = await db.query(query);
       const bus = result.rows[0];
 
@@ -32,7 +32,6 @@ export default class BusesController {
         },
       });
     } catch (error) {
-      console.log(error);
       return res.status(500)
         .json({
           status: 'error',
