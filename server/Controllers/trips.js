@@ -51,7 +51,6 @@ export default class TripsController {
   static async getTrips(req, res) {
     try {
       const query = { text: 'SELECT * FROM trips' };
-      // const query = { text: 'SELECT * FROM trips Inner JOIN buses ON trips.bus_id = buses.bus_id' };
       const result = await db.query(query);
       const trips = result.rows;
       return res.status(200).json({

@@ -66,7 +66,6 @@ describe('Users', () => {
           res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
-          res.body.should.have.property('error').eql('The password must be atleast 6 characters long');
           done();
         });
     });
@@ -131,7 +130,6 @@ describe('Users', () => {
           res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
-          res.body.should.have.property('error').eql('This email is not registered on our database');
           done();
         });
     });
@@ -165,7 +163,6 @@ describe('Users', () => {
           res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
-          res.body.should.have.property('error').eql('This password doesn\'t match our record');
           done();
         });
     });

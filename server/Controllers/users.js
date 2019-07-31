@@ -12,7 +12,6 @@ export default class UserController {
           'insert into users (email, first_name, last_name, password, is_admin) values ($1, $2, $3, $4, $5) returning *',
         values: [req.body.email, req.body.first_name, req.body.last_name, hash, false],
       };
-
       const result = await db.query(query);
       const createdUser = result.rows[0];
       const userToken = auth.generateToken(createdUser);
@@ -47,7 +46,6 @@ export default class UserController {
         data: users,
       });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({
         status: 'error',
         error: 'Server Error',

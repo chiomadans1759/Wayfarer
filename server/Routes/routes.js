@@ -26,7 +26,7 @@ export default (server) => {
   server.patch('/api/v1/trips/:id', auth.verifyUserToken, auth.verifyAdmin, validateInputs.validateId, validateInputs.trips, TripsController.cancelATrip);
 
   /* Bookings Routes Here */
-  server.post('/api/v1/bookings', auth.verifyUserToken, BookingsController.bookTrip);
+  server.post('/api/v1/bookings', auth.verifyUserToken, validateInputs.addBookings, BookingsController.bookTrip);
   server.get('/api/v1/bookings', auth.verifyUserToken, BookingsController.getAllBookings);
   server.get('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.getABooking);
   server.delete('/api/v1/bookings/:id', auth.verifyUserToken, validateInputs.validateId, validateInputs.bookings, BookingsController.deleteABooking);
