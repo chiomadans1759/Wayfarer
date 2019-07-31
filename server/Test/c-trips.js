@@ -24,7 +24,7 @@ const admin = {
 describe('Trips', () => {
   // Test for creating new trip
   describe('/POST register a trip', () => {
-    it('it should throw an error if the request body is empty', (done) => {
+    it('it should flag an error if user sends an empty request', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
         .send(admin)
@@ -163,7 +163,7 @@ describe('Trips', () => {
         });
     });
 
-    it('it should return error if trip already exists', (done) => {
+    it('it should return error if this trip exists already', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
         .send(admin)

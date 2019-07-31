@@ -134,7 +134,7 @@ describe('Users', () => {
         });
     });
 
-    it('it should login a registered user and generate an access token', (done) => {
+    it('it should generate an access token when a user is logged in', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
         .send(login)

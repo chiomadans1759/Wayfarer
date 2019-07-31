@@ -24,7 +24,7 @@ const admin = {
 describe('Buses', () => {
   // Test for creating new user
   describe('/POST register a bus', () => {
-    it('it should throw an error if the request body is empty', (done) => {
+    it('it should not send request if the body of request is empty', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
         .send(admin)
@@ -146,7 +146,7 @@ describe('Buses', () => {
         });
     });
 
-    it('it should return error if bus already exists', (done) => {
+    it('it should return error if this bus has already been created', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
         .send(admin)
@@ -175,7 +175,7 @@ describe('Buses', () => {
 
   // Test for Fetching existing buses
   describe('/Get Buses', () => {
-    it('it should return unauthorized if user is not logged in', (done) => {
+    it('it should return unauthorized when a user tries to get bus without being logged in', (done) => {
       chai.request(app)
         .get('/api/v1/buses')
         .end((error, res) => {
