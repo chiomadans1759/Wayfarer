@@ -25,7 +25,7 @@ app.use('/', swaggerUi.serve);
 Route(app);
 
 // define routes
-app.get('/api/v1/docs', swaggerUi.setup(swaggerDocs));
+app.get('/docs', swaggerUi.setup(swaggerDocs));
 app.get('/', (req, res) => {
   res.json({ Message: 'Welcome! This is the Wayfarer home page.' });
 });
