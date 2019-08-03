@@ -11,7 +11,7 @@ WayFarer is a public bus transportation booking web App that allows user secure 
 2. A detailed documentation of the processes carried out during the booking activities
 
 ## API Swagger Documentation
-[https://wayfarer-bus-app.herokuapp.com/api/v1/docs] 
+[https://wayfarer-bus-app.herokuapp.com/docs] 
 
 
 
