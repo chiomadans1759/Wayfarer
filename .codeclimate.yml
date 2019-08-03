@@ -5,7 +5,7 @@ checks:
   complex-logic:
     enabled: true
   file-lines:
-    enabled: false
+    enabled: true
   method-complexity:
     enabled: true
   method-count:
