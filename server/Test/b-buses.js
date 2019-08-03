@@ -176,6 +176,8 @@ describe('Buses', () => {
             .get('/api/v1/buses')
             .set('x-access-token', token)
             .end((error, data) => {
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
               data.should.have.status(401);
               data.body.should.have.property('error').eql('Hi! This resource can only be accessed by an admin');
               done();
@@ -188,18 +190,18 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
-          res.should.have.status(200);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
+          res.should.have.status(200);
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses')
             .set('x-access-token', token)
             .end((error, data) => {
-              data.should.have.status(200);
               data.body.should.be.an('object');
+              data.should.have.status(200);
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
               done();
