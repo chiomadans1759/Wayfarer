@@ -64,6 +64,9 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -72,6 +75,7 @@ describe('Buses', () => {
             .send({ manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 14 })
             .end((error, data) => {
               data.should.have.status(400);
+              data.body.should.be.an('object');
               data.body.should.have.property('error').eql('number_plate is required');
               done();
             });
@@ -109,6 +113,8 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
@@ -138,6 +144,11 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -184,6 +195,8 @@ describe('Buses', () => {
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(401);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('Hi! This resource can only be accessed by an admin');
               done();
             });
@@ -197,7 +210,9 @@ describe('Buses', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses')
