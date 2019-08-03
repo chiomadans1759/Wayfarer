@@ -47,9 +47,8 @@ describe('Users', () => {
           nick_name: 'Thomas',
         })
         .end((error, res) => {
-          res.should.have.status(400);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
+          res.should.have.status(400);
           res.body.should.have.property('error').eql('You cannot add extra fields to the user');
           done();
         });
@@ -65,8 +64,6 @@ describe('Users', () => {
           password: 'victor419',
         })
         .end((error, res) => {
-          res.should.have.status(400);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('Firstname and Lastname must be a text');
           done();
@@ -82,10 +79,10 @@ describe('Users', () => {
           email: 'virilwan@gmail.com',
         })
         .end((error, res) => {
-          res.should.have.status(400);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('password is required');
+          res.should.have.status(400);
+          res.body.should.be.an('object');
           done();
         });
     });
@@ -100,8 +97,6 @@ describe('Users', () => {
           password: 'vic',
         })
         .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('Password must be atleast 6 digits and should contain atleast a number');
           done();
@@ -113,12 +108,12 @@ describe('Users', () => {
         .post('/api/v1/auth/signup')
         .send(user)
         .end((err, res) => {
-          res.should.have.status(201);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('is_admin');
           res.body.data.should.have.property('first_name');
+          res.should.have.status(201);
+          res.body.should.be.an('object');
           res.body.data.should.have.property('last_name');
           res.body.data.should.have.property('email');
           res.body.data.should.have.property('token');

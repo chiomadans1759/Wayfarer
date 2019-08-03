@@ -52,10 +52,10 @@ describe('Bookings', () => {
         .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
+          res.should.have.status(200);
+          res.body.should.be.an('object');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
@@ -69,7 +69,6 @@ describe('Bookings', () => {
             })
             .end((error, data) => {
               data.should.have.status(400);
-              data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('You cannot add extra fields');
               done();
@@ -82,9 +81,9 @@ describe('Bookings', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
-          res.should.have.status(200);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
+          res.should.have.status(200);
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
@@ -98,7 +97,6 @@ describe('Bookings', () => {
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('seat_number is required');
               done();
             });
@@ -111,7 +109,6 @@ describe('Bookings', () => {
         .end((error, res) => {
           res.should.have.status(401);
           res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('No token provided.');
           done();
         });
@@ -123,9 +120,9 @@ describe('Bookings', () => {
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
+          res.body.should.be.an('object');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
@@ -136,10 +133,10 @@ describe('Bookings', () => {
             .end((error, data) => {
               data.should.have.status(201);
               data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('success');
-              data.body.should.have.property('data');
               data.body.data.should.have.property('trip_id');
+              data.body.should.have.property('data');
               data.body.data.should.have.property('bus_id');
+              data.body.should.have.property('status').eql('success');
               data.body.data.should.have.property('seat_number');
               done();
             });
@@ -152,10 +149,9 @@ describe('Bookings', () => {
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
+          res.body.data.should.have.property('token');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
           chai.request(app)
@@ -163,9 +159,9 @@ describe('Bookings', () => {
             .set('x-access-token', token)
             .send(booking)
             .end((error, data) => {
+              data.body.should.have.property('status').eql('error');
               data.should.have.status(400);
               data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('This seat has already been booked');
               done();
             });
