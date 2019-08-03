@@ -33,7 +33,6 @@ describe('Trips', () => {
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
           chai.request(app)
@@ -56,8 +55,6 @@ describe('Trips', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
@@ -76,7 +73,6 @@ describe('Trips', () => {
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('You cannot add extra fields to this trip');
               done();
             });
@@ -122,7 +118,6 @@ describe('Trips', () => {
           res.should.have.status(200);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
@@ -185,12 +180,6 @@ describe('Trips', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
-              data.body.data.should.have.property('id');
-              data.body.data.should.have.property('bus_id');
-              data.body.data.should.have.property('origin');
-              data.body.data.should.have.property('destination');
-              data.body.data.should.have.property('trip_date');
-              data.body.data.should.have.property('fare');
               done();
             });
         });
@@ -202,7 +191,6 @@ describe('Trips', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
@@ -230,10 +218,9 @@ describe('Trips', () => {
         .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
-          res.should.have.status(200);
           res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
+          res.should.have.status(200);
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
@@ -255,8 +242,8 @@ describe('Trips', () => {
         .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
-          res.should.have.status(200);
           res.body.should.be.an('object');
+          res.should.have.status(200);
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
