@@ -1,6 +1,6 @@
 # Wayfarer
 
-[![Build Status](https://travis-ci.com/chiomadans1759/Wayfarer.svg?branch=develop)](https://travis-ci.com/chiomadans1759/Wayfarer)  ![Maintainability](https://img.shields.io/npm/l/wayfarer.svg)    [![Coverage Status](https://coveralls.io/repos/github/chiomadans1759/Wayfarer/badge.svg)](https://coveralls.io/github/chiomadans1759/Wayfarer)   [![![Maintainability](https://api.codeclimate.com/v1/badges/9d5a5ac09199186f297a/maintainability)](https://codeclimate.com/github/chiomadans1759/Wayfarer/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/9d5a5ac09199186f297a/test_coverage)](https://codeclimate.com/github/chiomadans1759/Wayfarer/test_coverage)
+[![Build Status](https://travis-ci.com/chiomadans1759/Wayfarer.svg?branch=develop)](https://travis-ci.com/chiomadans1759/Wayfarer)  ![Maintainability](https://img.shields.io/npm/l/wayfarer.svg)    [![Coverage Status](https://coveralls.io/repos/github/chiomadans1759/Wayfarer/badge.svg)](https://coveralls.io/github/chiomadans1759/Wayfarer)    [![Maintainability](https://api.codeclimate.com/v1/badges/9d5a5ac09199186f297a/maintainability)](https://codeclimate.com/github/chiomadans1759/Wayfarer/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/9d5a5ac09199186f297a/test_coverage)](https://codeclimate.com/github/chiomadans1759/Wayfarer/test_coverage)
 
 
 
