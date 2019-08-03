@@ -18,6 +18,11 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -26,6 +31,7 @@ describe('Buses', () => {
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('The request body must not be empty');
               done();
             });
@@ -37,6 +43,8 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -44,6 +52,7 @@ describe('Buses', () => {
             .send({ number_plate: 'LAG-Y46-E3', manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 14, color: 'Red' })
             .end((error, data) => {
               data.should.have.status(400);
+              data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('You cannot add extra fields to this bus');
               done();
@@ -56,6 +65,8 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -76,6 +87,8 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -96,6 +109,11 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -106,6 +124,13 @@ describe('Buses', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
+              data.body.data.should.have.property('bus_id');
+              data.body.data.should.have.property('user_id');
+              data.body.data.should.have.property('number_plate');
+              data.body.data.should.have.property('manufacturer');
+              data.body.data.should.have.property('model');
+              data.body.data.should.have.property('year');
+              data.body.data.should.have.property('capacity');
               done();
             });
         });
@@ -116,6 +141,11 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .post('/api/v1/buses')
@@ -124,6 +154,7 @@ describe('Buses', () => {
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('The bus with this plate number already exists');
               done();
             });
@@ -138,6 +169,8 @@ describe('Buses', () => {
         .get('/api/v1/buses')
         .end((error, res) => {
           res.should.have.status(401);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('No token provided.');
           done();
         });
@@ -148,14 +181,19 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses')
             .set('x-access-token', token)
             .end((error, data) => {
+              data.should.have.status(401);
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
-              data.should.have.status(401);
               data.body.should.have.property('error').eql('Hi! This resource can only be accessed by an admin');
               done();
             });
@@ -167,13 +205,18 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses')
             .set('x-access-token', token)
             .end((error, data) => {
-              data.body.should.be.an('object');
               data.should.have.status(200);
+              data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
               done();
@@ -186,6 +229,11 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses/1')
@@ -205,6 +253,11 @@ describe('Buses', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses/p')

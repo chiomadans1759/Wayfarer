@@ -47,8 +47,9 @@ describe('Users', () => {
           nick_name: 'Thomas',
         })
         .end((error, res) => {
-          res.body.should.have.property('status').eql('error');
           res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('You cannot add extra fields to the user');
           done();
         });
@@ -64,6 +65,8 @@ describe('Users', () => {
           password: 'victor419',
         })
         .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('Firstname and Lastname must be a text');
           done();
@@ -79,10 +82,10 @@ describe('Users', () => {
           email: 'virilwan@gmail.com',
         })
         .end((error, res) => {
-          res.body.should.have.property('status').eql('error');
-          res.body.should.have.property('error').eql('password is required');
           res.should.have.status(400);
           res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('password is required');
           done();
         });
     });
@@ -97,6 +100,8 @@ describe('Users', () => {
           password: 'vic',
         })
         .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('Password must be atleast 6 digits and should contain atleast a number');
           done();
@@ -237,7 +242,13 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
+
           chai.request(app)
             .get('/api/v1/users')
             .set('x-access-token', token)
@@ -256,7 +267,13 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
+
           chai.request(app)
             .get('/api/v1/users')
             .set('x-access-token', token)
@@ -275,6 +292,11 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
           chai.request(app)
@@ -295,6 +317,11 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
           chai.request(app)
