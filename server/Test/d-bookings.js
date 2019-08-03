@@ -47,6 +47,36 @@ describe('Bookings', () => {
         });
     });
 
+    it('it should not book a seat if the request body is more than the required', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signin')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/bookings')
+            .set('x-access-token', token)
+            .send({
+              trip_id: 2,
+              seat_number: 2,
+              user: 'Chioma',
+            })
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('You cannot add extra fields');
+              done();
+            });
+        });
+    });
+
     it('it should not create a booking without all required fields', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
@@ -274,55 +304,55 @@ describe('Bookings', () => {
         });
     });
 
-    // it('it should return error if booking doesn\'t exist', (done) => {
-    //   chai.request(app)
-    //     .post('/api/v1/auth/signin')
-    //     .send(admin)
-    //     .end((err, res) => {
-    //       res.should.have.status(200);
-    //       res.body.should.be.an('object');
-    //       res.body.should.have.property('status').eql('success');
-    //       res.body.should.have.property('data');
-    //       res.body.data.should.have.property('token');
-    //       const { token } = res.body.data;
+    it('it should return error if booking doesn\'t exist', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signin')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
 
-    //       chai.request(app)
-    //         .get('/api/v1/bookings/5')
-    //         .set('x-access-token', token)
-    //         .end((error, data) => {
-    //           data.should.have.status(404);
-    //           data.body.should.be.an('object');
-    //           data.body.should.have.property('status').eql('error');
-    //           data.body.should.have.property('error').eql('Booking with this ID doesn\'t exist');
-    //           done();
-    //         });
-    //     });
-    // });
+          chai.request(app)
+            .get('/api/v1/bookings/5')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(404);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('Booking with this ID doesn\'t exist');
+              done();
+            });
+        });
+    });
 
-    // it('it should return error if booking by this user doesn\'t exist', (done) => {
-    //   chai.request(app)
-    //     .post('/api/v1/auth/signin')
-    //     .send(login)
-    //     .end((err, res) => {
-    //       res.should.have.status(200);
-    //       res.body.should.be.an('object');
-    //       res.body.should.have.property('status').eql('success');
-    //       res.body.should.have.property('data');
-    //       res.body.data.should.have.property('token');
-    //       const { token } = res.body.data;
+    it('it should return error if booking by this user doesn\'t exist', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signin')
+        .send(login)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
 
-    //       chai.request(app)
-    //         .get('/api/v1/bookings/5')
-    //         .set('x-access-token', token)
-    //         .end((error, data) => {
-    //           data.should.have.status(404);
-    //           data.body.should.be.an('object');
-    //           data.body.should.have.property('status').eql('error');
-    //           data.body.should.have.property('error').eql('This booking by this user does not exist');
-    //           done();
-    //         });
-    //     });
-    // });
+          chai.request(app)
+            .get('/api/v1/bookings/5')
+            .set('x-access-token', token)
+            .end((error, data) => {
+              data.should.have.status(404);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('This booking by this user does not exist');
+              done();
+            });
+        });
+    });
 
     it('it should return invalid id if id is not valid', (done) => {
       chai.request(app)
