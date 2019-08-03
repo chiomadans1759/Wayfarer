@@ -134,7 +134,6 @@ describe('Buses', () => {
           res.should.have.status(200);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -144,7 +143,6 @@ describe('Buses', () => {
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('The bus with this plate number already exists');
               done();
             });
@@ -159,8 +157,6 @@ describe('Buses', () => {
         .get('/api/v1/buses')
         .end((error, res) => {
           res.should.have.status(401);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('No token provided.');
           done();
         });
@@ -175,15 +171,12 @@ describe('Buses', () => {
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
             .get('/api/v1/buses')
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(401);
-              data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('Hi! This resource can only be accessed by an admin');
               done();
             });
