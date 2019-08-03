@@ -19,9 +19,7 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -31,7 +29,6 @@ describe('Buses', () => {
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
-              data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('The request body must not be empty');
               done();
             });
@@ -52,7 +49,6 @@ describe('Buses', () => {
             .send({ number_plate: 'LAG-Y46-E3', manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 14, color: 'Red' })
             .end((error, data) => {
               data.should.have.status(400);
-              data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('You cannot add extra fields to this bus');
               done();
@@ -66,6 +62,7 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -175,6 +172,9 @@ describe('Buses', () => {
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -220,6 +220,9 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
