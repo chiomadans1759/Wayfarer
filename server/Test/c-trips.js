@@ -50,6 +50,39 @@ describe('Trips', () => {
         });
     });
 
+    it('it should throw an error if the request body fields are more than the required fields', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signin')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/trips')
+            .set('x-access-token', token)
+            .send({
+              bus_id: 1,
+              origin: 'Lagos',
+              destination: 'Benin',
+              trip_date: '07-09-2019',
+              fare: 'N5,600',
+              state: 'Imo',
+            })
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('You cannot add extra fields to this trip');
+              done();
+            });
+        });
+    });
+
     it('it should not create a trip without all required trip fields', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')

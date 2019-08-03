@@ -50,6 +50,39 @@ describe('Buses', () => {
         });
     });
 
+    it('it should not create a bus if the request body fields are more than the required fields', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signin')
+        .send(admin)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
+          res.body.data.should.have.property('token');
+          const { token } = res.body.data;
+
+          chai.request(app)
+            .post('/api/v1/buses')
+            .set('x-access-token', token)
+            .send({
+              number_plate: 'LAG-Y46-E3',
+              manufacturer: 'Lexus',
+              model: 'Jeep-2019',
+              year: 2019,
+              capacity: 14,
+              color: 'Red',
+            })
+            .end((error, data) => {
+              data.should.have.status(400);
+              data.body.should.be.an('object');
+              data.body.should.have.property('status').eql('error');
+              data.body.should.have.property('error').eql('You cannot add extra fields to this bus');
+              done();
+            });
+        });
+    });
+
     it('it should not create a bus without all required bus fields', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')

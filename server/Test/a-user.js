@@ -36,6 +36,43 @@ describe('Users', () => {
         });
     });
 
+    it('it should not create a user when the input fields are more than the required', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signup')
+        .send({
+          first_name: 'Victor',
+          last_name: 'Ugwueze',
+          email: 'victor@gmail.com',
+          password: 'victor419',
+          nick_name: 'Thomas',
+        })
+        .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('You cannot add extra fields to the user');
+          done();
+        });
+    });
+
+    it('it should throw an error if the fist_name and last_name are not texts', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signup')
+        .send({
+          first_name: 'Victor55',
+          last_name: 'Ugwueze67',
+          email: 'victor@gmail.com',
+          password: 'victor419',
+        })
+        .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('Firstname and Lastname must be a text');
+          done();
+        });
+    });
+
     it('it should not POST a user without all required user fields', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signup')
@@ -53,7 +90,7 @@ describe('Users', () => {
         });
     });
 
-    it('it should check that password is atleast 6 characters', (done) => {
+    it('it should check that password is atleast 6 characters and also contains atleast a number', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signup')
         .send({
@@ -66,6 +103,7 @@ describe('Users', () => {
           res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('Password must be atleast 6 digits and should contain atleast a number');
           done();
         });
     });
@@ -115,6 +153,23 @@ describe('Users', () => {
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('password is required');
+          done();
+        });
+    });
+
+    it('it should not login a user with fields more than the required', (done) => {
+      chai.request(app)
+        .post('/api/v1/auth/signin')
+        .send({
+          email: 'victorAdeoye@gmail.com',
+          password: 'victor@45T',
+          username: 'Victor',
+        })
+        .end((error, res) => {
+          res.should.have.status(400);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('You cannot add extra fields to the login details');
           done();
         });
     });

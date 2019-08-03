@@ -5,12 +5,12 @@ const validateInputs = {
   async users(req, res, next) {
     const emailFilter = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
     const passwordCheck = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
-    const textCheck = /^([A-Za-z])/;
+    const textCheck = /^[A-Za-z]+$/;
     const required = ['email', 'first_name', 'last_name', 'password'];
     const email = emailFilter.test(String(req.body.email).toLowerCase());
     const password = passwordCheck.test(String(req.body.password));
-    const lastName = textCheck.test(String(req.body.first_name).toLowerCase());
-    const firstName = textCheck.test(String(req.body.first_name).toLowerCase());
+    const lastName = textCheck.test(String(req.body.last_name));
+    const firstName = textCheck.test(String(req.body.first_name));
 
     const query = {
       text: 'select * from users where email = $1',
@@ -19,10 +19,17 @@ const validateInputs = {
     const result = await db.query(query);
     const user = result.rows;
 
-    if (req.body.length < 1 || req.body.length > 4) {
+    if (req.body.length < 1) {
       return res.status(400).json({
         status: 'error',
         error: 'The request body must not be empty',
+      });
+    }
+
+    if (Object.keys(req.body).length > 4) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'You cannot add extra fields to the user',
       });
     }
 
@@ -31,13 +38,6 @@ const validateInputs = {
         return res.status(400).json({
           status: 'error',
           error: `${required[i]} is required`,
-        });
-      }
-
-      if (!req.body[required[i]]) {
-        return res.status(400).json({
-          status: 'error',
-          error: 'You can only enter the required fields',
         });
       }
     }
@@ -49,13 +49,6 @@ const validateInputs = {
       });
     }
 
-    if (!password) {
-      return res.status(400).json({
-        status: 'error',
-        error: 'Password must contain atleast one of a special char and a digit',
-      });
-    }
-
     if (!firstName && !lastName) {
       return res.status(400).json({
         status: 'error',
@@ -63,10 +56,10 @@ const validateInputs = {
       });
     }
 
-    if (req.body.password.length < 6) {
+    if (!password) {
       return res.status(400).json({
         status: 'error',
-        error: 'The password must be atleast 6 characters long',
+        error: 'Password must be atleast 6 digits and should contain atleast a number',
       });
     }
 
@@ -87,7 +80,14 @@ const validateInputs = {
     if (req.body.email && !email) {
       return res.status(400).json({
         status: 'error',
-        error: 'This email is not correct!',
+        error: 'This login credentials is in correct!',
+      });
+    }
+
+    if (Object.keys(req.body).length > 2) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'You cannot add extra fields to the login details',
       });
     }
 
@@ -152,6 +152,13 @@ const validateInputs = {
       return res.status(400).json({
         status: 'error',
         error: 'The request body must not be empty',
+      });
+    }
+
+    if (Object.keys(req.body).length > 5) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'You cannot add extra fields to this bus',
       });
     }
 
@@ -221,6 +228,13 @@ const validateInputs = {
       });
     }
 
+    if (Object.keys(req.body).length > 5) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'You cannot add extra fields to this trip',
+      });
+    }
+
     for (let i = 0; i < required.length; i += 1) {
       if (!req.body[required[i]]) {
         return res.status(400).json({
@@ -266,6 +280,13 @@ const validateInputs = {
       return res.status(400).json({
         status: 'error',
         error: 'The request body must not be empty',
+      });
+    }
+
+    if (Object.keys(req.body).length > 2) {
+      return res.status(400).json({
+        status: 'error',
+        error: 'You cannot add extra fields',
       });
     }
 
@@ -321,14 +342,14 @@ const validateInputs = {
     const booking = result.rows;
     req.booking = booking;
 
-    if (!booking && req.user.is_admin === false) {
+    if (!booking.length && req.user.is_admin === false) {
       return res.status(404).json({
         status: 'error',
         error: 'This booking by this user does not exist',
       });
     }
 
-    if (!booking) {
+    if (!booking.length) {
       return res.status(404).json({
         status: 'error',
         error: 'Booking with this ID doesn\'t exist',
