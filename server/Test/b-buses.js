@@ -44,9 +44,6 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -69,9 +66,6 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -94,9 +88,6 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -133,13 +124,6 @@ describe('Buses', () => {
               data.body.should.be.an('object');
               data.body.should.have.property('status').eql('success');
               data.body.should.have.property('data');
-              data.body.data.should.have.property('bus_id');
-              data.body.data.should.have.property('user_id');
-              data.body.data.should.have.property('number_plate');
-              data.body.data.should.have.property('manufacturer');
-              data.body.data.should.have.property('model');
-              data.body.data.should.have.property('year');
-              data.body.data.should.have.property('capacity');
               done();
             });
         });
@@ -191,9 +175,6 @@ describe('Buses', () => {
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -239,9 +220,6 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
