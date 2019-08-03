@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
@@ -5,21 +6,9 @@ import app from '../app';
 chai.use(chaiHttp);
 chai.should();
 
-const bus = {
-  number_plate: 'LAG-Y46-E3',
-  manufacturer: 'Lexus',
-  model: 'Jeep-2019',
-  year: 2019,
-  capacity: 14,
-};
-const login = {
-  email: 'victor@gmail.com',
-  password: 'victor419',
-};
-const admin = {
-  email: 'admin@gmail.com',
-  password: 'omadamsel',
-};
+const bus = { number_plate: 'LAG-Y46-E3', manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 14 };
+const login = { email: 'victor@gmail.com', password: 'victor419' };
+const admin = { email: 'admin@gmail.com', password: 'omadamsel' };
 
 describe('Buses', () => {
   // Test for creating new user
@@ -35,7 +24,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .post('/api/v1/buses')
             .set('x-access-token', token)
@@ -61,18 +49,10 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .post('/api/v1/buses')
             .set('x-access-token', token)
-            .send({
-              number_plate: 'LAG-Y46-E3',
-              manufacturer: 'Lexus',
-              model: 'Jeep-2019',
-              year: 2019,
-              capacity: 14,
-              color: 'Red',
-            })
+            .send({ number_plate: 'LAG-Y46-E3', manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 14, color: 'Red' })
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
@@ -94,16 +74,10 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .post('/api/v1/buses')
             .set('x-access-token', token)
-            .send({
-              manufacturer: 'Lexus',
-              model: 'Jeep-2019',
-              year: 2019,
-              capacity: 14,
-            })
+            .send({ manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 14 })
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
@@ -125,17 +99,10 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .post('/api/v1/buses')
             .set('x-access-token', token)
-            .send({
-              number_plate: 'LAG-Y46-E3',
-              manufacturer: 'Lexus',
-              model: 'Jeep-2019',
-              year: 2019,
-              capacity: 'four',
-            })
+            .send({ number_plate: 'LAG-Y46-E3', manufacturer: 'Lexus', model: 'Jeep-2019', year: 2019, capacity: 'four',})
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
@@ -157,7 +124,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .post('/api/v1/buses')
             .set('x-access-token', token)
@@ -190,7 +156,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .post('/api/v1/buses')
             .set('x-access-token', token)
@@ -231,7 +196,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .get('/api/v1/buses')
             .set('x-access-token', token)
@@ -256,7 +220,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .get('/api/v1/buses')
             .set('x-access-token', token)
@@ -281,7 +244,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .get('/api/v1/buses/1')
             .set('x-access-token', token)
@@ -306,7 +268,6 @@ describe('Buses', () => {
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .get('/api/v1/buses/p')
             .set('x-access-token', token)
