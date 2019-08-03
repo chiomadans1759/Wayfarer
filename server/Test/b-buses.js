@@ -184,7 +184,8 @@ describe('Buses', () => {
         .send(login)
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('status');
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
@@ -193,6 +194,7 @@ describe('Buses', () => {
             .set('x-access-token', token)
             .end((error, data) => {
               data.should.have.status(401);
+              data.body.should.be.an('object');
               data.body.should.have.property('status').eql('error');
               data.body.should.have.property('error').eql('Hi! This resource can only be accessed by an admin');
               done();
