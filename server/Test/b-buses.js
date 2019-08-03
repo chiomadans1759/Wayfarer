@@ -44,6 +44,9 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -66,6 +69,9 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
@@ -88,6 +94,9 @@ describe('Buses', () => {
         .send(admin)
         .end((err, res) => {
           res.should.have.status(200);
+          res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('success');
+          res.body.should.have.property('data');
           res.body.data.should.have.property('token');
           const { token } = res.body.data;
           chai.request(app)
