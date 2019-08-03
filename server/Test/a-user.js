@@ -108,12 +108,12 @@ describe('Users', () => {
         .post('/api/v1/auth/signup')
         .send(user)
         .end((err, res) => {
+          res.should.have.status(201);
+          res.body.should.be.an('object');
           res.body.should.have.property('status').eql('success');
           res.body.should.have.property('data');
           res.body.data.should.have.property('is_admin');
           res.body.data.should.have.property('first_name');
-          res.should.have.status(201);
-          res.body.should.be.an('object');
           res.body.data.should.have.property('last_name');
           res.body.data.should.have.property('email');
           res.body.data.should.have.property('token');
@@ -237,13 +237,7 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(login)
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .get('/api/v1/users')
             .set('x-access-token', token)
@@ -262,13 +256,7 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
-
           chai.request(app)
             .get('/api/v1/users')
             .set('x-access-token', token)
@@ -287,11 +275,6 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
           chai.request(app)
@@ -312,11 +295,6 @@ describe('Users', () => {
         .post('/api/v1/auth/signin')
         .send(admin)
         .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.an('object');
-          res.body.should.have.property('status').eql('success');
-          res.body.should.have.property('data');
-          res.body.data.should.have.property('token');
           const { token } = res.body.data;
 
           chai.request(app)
