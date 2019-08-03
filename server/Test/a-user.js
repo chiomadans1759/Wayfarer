@@ -65,9 +65,9 @@ describe('Users', () => {
           password: 'victor419',
         })
         .end((error, res) => {
+          res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
-          res.should.have.status(400);
           res.body.should.have.property('error').eql('Firstname and Lastname must be a text');
           done();
         });
@@ -76,12 +76,16 @@ describe('Users', () => {
     it('it should not POST a user without all required user fields', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signup')
-        .send({ first_name: 'Okeke', last_name: 'Rilwan', email: 'virilwan@gmail.com' })
-        .end((res) => {
+        .send({
+          first_name: 'Okeke',
+          last_name: 'Rilwan',
+          email: 'virilwan@gmail.com',
+        })
+        .end((error, res) => {
           res.should.have.status(400);
-          res.body.should.have.property('error').eql('password is required');
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
+          res.body.should.have.property('error').eql('password is required');
           done();
         });
     });
@@ -96,10 +100,10 @@ describe('Users', () => {
           password: 'vic',
         })
         .end((err, res) => {
+          res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
           res.body.should.have.property('error').eql('Password must be atleast 6 digits and should contain atleast a number');
-          res.should.have.status(400);
           done();
         });
     });
@@ -126,7 +130,7 @@ describe('Users', () => {
       chai.request(app)
         .post('/api/v1/auth/signup')
         .send(user)
-        .end((res) => {
+        .end((error, res) => {
           res.should.have.status(400);
           res.body.should.be.an('object');
           res.body.should.have.property('status').eql('error');
@@ -173,11 +177,14 @@ describe('Users', () => {
     it('it should return error if user is not registered', (done) => {
       chai.request(app)
         .post('/api/v1/auth/signin')
-        .send({ email: 'tosin@gmail.com', password: 'tosinf419' })
-        .end((res) => {
+        .send({
+          email: 'tosin@gmail.com',
+          password: 'tosinf419',
+        })
+        .end((error, res) => {
           res.should.have.status(400);
-          res.body.should.have.property('status');
           res.body.should.be.an('object');
+          res.body.should.have.property('status').eql('error');
           done();
         });
     });
