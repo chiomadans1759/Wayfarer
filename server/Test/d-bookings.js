@@ -62,7 +62,11 @@ describe('Bookings', () => {
           chai.request(app)
             .post('/api/v1/bookings')
             .set('x-access-token', token)
-            .send([])
+            .send({
+              trip_id: 2,
+              seat_number: 2,
+              color: 'Red',
+            })
             .end((error, data) => {
               data.should.have.status(400);
               data.body.should.be.an('object');
